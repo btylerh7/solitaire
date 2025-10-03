@@ -14,7 +14,7 @@ function HolderLocations:setup()
 	local startX = LocationConfig.leftSideX
 	local startY = LocationConfig.topRowY
 	HolderLocations.drawPile = Holder.new(steppedX(startX, 1), startY, "draw")
-	HolderLocations.drawnPile = Holder.new(steppedX(startX, 2), startY, "draw")
+	HolderLocations.drawnPile = Holder.new(steppedX(startX, 2), startY, "drawn")
 
 	startX = LocationConfig.aceAreaX
 	startY = LocationConfig.topRowY

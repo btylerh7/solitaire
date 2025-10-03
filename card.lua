@@ -3,11 +3,11 @@ Card = {}
 Card.__index = Card
 ActiveCards = {}
 
-function Card.new(x, y, rank, suit, isDisplayed)
+function Card.new(rank, suit, isDisplayed)
 	--- @class Card
 	local card = setmetatable({}, Card)
-	card.x = x
-	card.y = y
+	card.x = 0
+	card.y = 0
 	card.width = 100
 	card.height = 150
 	card.rank = rank
@@ -16,7 +16,7 @@ function Card.new(x, y, rank, suit, isDisplayed)
 	card.sprite = love.graphics.newImage("assets/1.2 Poker cards.png")
 	card:setQuad()
 
-	table.insert(ActiveCards, card)
+	return card
 end
 
 function Card:setQuad()
