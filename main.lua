@@ -9,6 +9,7 @@ function love.update(dt)
 end
 
 function love.draw()
+	love.graphics.setBackgroundColor(0.21, 0.42, 0.16)
 	Card:drawAll()
 end
 
@@ -16,7 +17,7 @@ function createCardGroup(count, startingX, startingY, stepCount)
 	local currentX = startingX
 
 	for _ = 1, count, 1 do
-		Card.new(currentX, startingY)
+		Card.new(currentX, startingY, 1, 3, true)
 		currentX = currentX + stepCount
 	end
 end
