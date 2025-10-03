@@ -1,8 +1,10 @@
+--- @class Card
 Card = {}
 Card.__index = Card
 ActiveCards = {}
 
 function Card.new(x, y, rank, suit, isDisplayed)
+	--- @class Card
 	local card = setmetatable({}, Card)
 	card.x = x
 	card.y = y
@@ -22,8 +24,8 @@ function Card:setQuad()
 	local rows = 5
 	local width = self.sprite:getWidth()
 	local height = self.sprite:getHeight()
-	local cardWidth = 48
-	local cardHeight = 64
+	local cardWidth = G.cardWidth
+	local cardHeight = G.cardHeight
 	local columnNumber = self.rank
 	local rowNumber = self.suit
 	if self.isDisplayed == false then
