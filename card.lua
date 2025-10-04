@@ -14,8 +14,6 @@ function Card.new(rank, suit, isDisplayed)
 	card.suit = suit
 	card.isDisplayed = isDisplayed
 	card.sprite = love.graphics.newImage("assets/1.2 Poker cards.png")
-	card:setQuad()
-
 	return card
 end
 
@@ -49,6 +47,7 @@ function Card:updateAll(dt)
 end
 
 function Card:draw()
+	self:setQuad()
 	-- love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
 	love.graphics.draw(self.sprite, self.quad, self.x, self.y)
 end

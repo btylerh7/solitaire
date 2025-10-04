@@ -10,12 +10,8 @@ G.cardHeight = 64
 function love.load()
 	HolderLocations:setup()
 	AllCards:loadCards()
-	HolderLocations.cardSlot1:addCard(AllCards[1])
-	HolderLocations.cardSlot1:addCard(AllCards[2])
-	HolderLocations.cardSlot1:addCard(AllCards[3])
-	HolderLocations.cardSlot2:addCard(AllCards[4])
-	HolderLocations.cardSlot2:addCard(AllCards[5])
-	HolderLocations.cardSlot2:addCard(AllCards[6])
+	AllCards:shuffle()
+	HolderLocations:addShuffledCards(AllCardsShuffled)
 end
 
 function love.update(dt)
