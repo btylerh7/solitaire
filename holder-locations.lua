@@ -49,6 +49,8 @@ function HolderLocations:addShuffledCards(cards)
 			self.cardSlots[i]:addCard(table.remove(cards, #cards))
 		end
 		self.cardSlots[i].cards[i].isDisplayed = true
+		self.cardSlots[i].cards[i].isDragable = true
+		self.cardSlots[i]:setCardLocation()
 	end
 
 	while #cards > 0 do
@@ -85,5 +87,34 @@ function HolderLocations:drawAll()
 	end
 	for index, value in ipairs(self.aceSlots) do
 		value:draw()
+	end
+end
+
+function HolderLocations:mousepressed(x, y)
+	for index, holder in pairs(self.cardSlots) do
+		for index, card in ipairs(holder.cards) do
+			if card.isDragable == true then
+				card:mousepressed(x, y)
+			end
+		end
+	end
+end
+function HolderLocations:mousemoved(x, y)
+	for index, holder in pairs(self.cardSlots) do
+		for index, card in ipairs(holder.cards) do
+			if card.isMoving == true then
+				card:mousemoved(x, y)
+			end
+		end
+	end
+end
+
+function HolderLocations:mousereleased(x, y)
+	for index, holder in pairs(self.cardSlots) do
+		for index, card in ipairs(holder.cards) do
+			if card.isMoving == true then
+				card:mousereleased(x, y, holder)
+			end
+		end
 	end
 end

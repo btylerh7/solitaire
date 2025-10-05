@@ -20,15 +20,7 @@ function Holder.new(x, y, type)
 	return holder
 end
 
-function Holder:load() end
-function Holder:update(dt) end
-
-function Holder:draw()
-	if not next(self.cards) then
-		love.graphics.setColor(0.21, 0.30, 0.16)
-		love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
-		love.graphics.setColor(1, 1, 1)
-	end
+function Holder:setCardLocation()
 	local yStep = 0
 	local xStep = 0
 	if self.type == "game" then
@@ -42,11 +34,42 @@ function Holder:draw()
 		local currentYStep = (index - 1) * yStep
 		card.x = self.x + currentXStep
 		card.y = self.y + currentYStep
-		card:draw()
 	end
 end
 
 ---@param card Card
 function Holder:addCard(card)
 	table.insert(self.cards, card)
+	if self.type == "game" then
+		card.y = (#self.cards * 20) + self.y
+		card.x = self.x
+	end
+	self:setCardLocation()
+end
+
+---@param card Card
+function Holder:removeCard(card) end
+
+function Holder:load() end
+function Holder:update(dt)
+	for key, value in ipairs(self.cards) do
+		value:update(dt)
+	end
+end
+
+function Holder:draw()
+	if not next(self.cards) then
+		love.graphics.setColor(0.21, 0.30, 0.16)
+		love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
+		love.graphics.setColor(1, 1, 1)
+	end
+	for index, card in ipairs(self.cards) do
+		card:draw()
+	end
+end
+
+function Holder:getLowestY()
+	local lastCard = self.cards[#self.cards]
+	local lowestY = lastCard.y + lastCard.height
+	return { lowestY = lowestY, lastCardY = lastCard.y }
 end
