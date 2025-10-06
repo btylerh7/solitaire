@@ -56,7 +56,7 @@ function Card:draw()
 	self:setQuad()
 	-- love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
 	love.graphics.setBlendMode("alpha", "alphamultiply")
-	love.graphics.draw(self.sprite, self.quad, self.x, self.y, nil, 2, 2)
+	love.graphics.draw(self.sprite, self.quad, self.x, self.y, nil, G.zoomMultiplier, G.zoomMultiplier)
 end
 
 function Card:mousepressed(x, y)

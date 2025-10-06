@@ -86,6 +86,7 @@ function State:transferCards(shouldMove)
 	for _, card in ipairs(self.currentlyMoving.cards) do
 		if shouldMove == true then
 			self.currentlyMoving.targetHolder:addCard(card)
+			self.currentlyMoving.holder:checkShouldReveal()
 		else
 			self.currentlyMoving.holder:addCard(card)
 		end

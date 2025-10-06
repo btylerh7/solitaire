@@ -7,6 +7,7 @@ require("state")
 G = {}
 G.cardWidth = 48
 G.cardHeight = 64
+G.zoomMultiplier = 2
 State = State:setup()
 
 function love.load()

@@ -26,9 +26,6 @@ function Holder:setCardLocation()
 	if self.type == "game" then
 		yStep = 20
 	end
-	if self.type == "drawn" then
-		xStep = 20
-	end
 	for index, card in ipairs(self.cards) do
 		local currentXStep = (index - 1) * xStep
 		local currentYStep = (index - 1) * yStep
@@ -51,12 +48,23 @@ function Holder:addCard(card)
 	self:setCardLocation()
 end
 
+function Holder:checkShouldReveal()
+	local nextCard = self.cards[#self.cards]
+	if #self.cards > 0 and self.type == "game" and nextCard.isDisplayed == false then
+		nextCard.isDisplayed = true
+		nextCard.isDragable = true
+	end
+end
+
 ---@param index number - index of card to be removed
 function Holder:removeCard(index)
 	local startingTotal = #self.cards
 	table.remove(self.cards, index)
 	if #self.cards == startingTotal then
 		print("error, card not removed properly")
+	end
+	if #self.cards == 0 then
+		return
 	end
 	-- for index, currentCard in ipairs(self.cards) do
 	-- 	if card.rank == currentCard.rank and card.suit == currentCard.suit then
@@ -98,11 +106,14 @@ end
 ---@param mouseY number
 ---@return boolean
 function Holder:isInHolder(mouseX, mouseY)
+	print("mouse x and y")
+	print(mouseX)
+	print(mouseY)
 	local halfWidth = self.width / 2
 	local lowest = self:getLowestY()
 
-	local minX = self.x - halfWidth
-	local maxX = self.x + halfWidth
+	local minX = self.x
+	local maxX = self.x + self.width
 
 	local isInX = mouseX > minX and mouseX < maxX
 	local isInY = mouseY > lowest.lastCardY and mouseY < lowest.lowestY

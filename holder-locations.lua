@@ -90,7 +90,23 @@ function HolderLocations:drawAll()
 	end
 end
 
+---Used when draw pile is clicked to reveal extra card
+function HolderLocations:drawCard()
+	if #self.drawPile.cards > 0 then
+		local nextCard = self.drawPile.cards[#self.drawPile.cards]
+		nextCard.isDisplayed = true
+		nextCard.isDragable = true
+		self.drawnPile:addCard(nextCard)
+		self.drawPile:removeCard(#self.drawPile.cards)
+	end
+end
+
 function HolderLocations:mousepressed(x, y)
+	if self.drawPile:isInHolder(x, y) == true then
+		self:drawCard()
+		return
+	end
+
 	for _, holder in pairs(self.cardSlots) do
 		for index, card in ipairs(holder.cards) do
 			if card.isDragable == true then
@@ -103,6 +119,25 @@ function HolderLocations:mousepressed(x, y)
 					State:setMoving(holder, card)
 					return
 				end
+			end
+		end
+	end
+	if #self.drawnPile.cards > 0 then
+		local topDrawnCard = self.drawnPile.cards[#self.drawnPile.cards]
+		topDrawnCard:mousepressed(x, y)
+		if topDrawnCard.isMoving == true then
+			State:setMoving(self.drawnPile, topDrawnCard)
+			return
+		end
+	end
+	for index, card in ipairs(self.drawnPile.cards) do
+		if card.isDragable == true then
+			card:mousepressed(x, y)
+			if card.isMoving == true then
+				print("clicked card is")
+				print(index)
+				print("total is")
+				print(#holder.cards)
 			end
 		end
 	end
