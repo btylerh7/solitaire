@@ -86,6 +86,9 @@ function Holder:draw()
 end
 
 function Holder:getLowestY()
+	if #self.cards == 0 then
+		return { lowestY = self.y + self.height, lastCardY = self.y }
+	end
 	local lastCard = self.cards[#self.cards]
 	local lowestY = lastCard.y + lastCard.height
 	return { lowestY = lowestY, lastCardY = lastCard.y }
