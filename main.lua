@@ -2,13 +2,12 @@ require("card")
 require("card-holder")
 require("holder-locations")
 require("all-cards")
+require("state")
 
 G = {}
 G.cardWidth = 48
 G.cardHeight = 64
-State = {
-	pressed = false,
-}
+State = State:setup()
 
 function love.load()
 	HolderLocations:setup()
@@ -24,6 +23,7 @@ end
 function love.draw()
 	love.graphics.setBackgroundColor(0.21, 0.42, 0.16)
 	HolderLocations:drawAll()
+	State:draw()
 end
 
 function love.mousepressed(x, y, button, isTouched)
@@ -34,7 +34,8 @@ function love.mousepressed(x, y, button, isTouched)
 end
 function love.mousemoved(x, y)
 	if State.pressed == true then
-		HolderLocations:mousemoved(x, y)
+		State:moveCard(x, y)
+		-- HolderLocations:mousemoved(x, y)
 	end
 end
 function love.mousereleased(x, y, button)

@@ -48,7 +48,14 @@ function Holder:addCard(card)
 end
 
 ---@param card Card
-function Holder:removeCard(card) end
+function Holder:removeCard(card)
+	for index, currentCard in ipairs(self.cards) do
+		if card.rank == currentCard.rank and card.suit == currentCard.suit then
+			table.remove(self.cards, index)
+			return
+		end
+	end
+end
 
 function Holder:load() end
 function Holder:update(dt)

@@ -95,6 +95,10 @@ function HolderLocations:mousepressed(x, y)
 		for index, card in ipairs(holder.cards) do
 			if card.isDragable == true then
 				card:mousepressed(x, y)
+				if card.isMoving == true then
+					State:setMoving(holder, card)
+					return
+				end
 			end
 		end
 	end

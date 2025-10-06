@@ -66,6 +66,9 @@ function Card:mousepressed(x, y)
 		self.startX = self.x
 		self.startY = self.y
 		self.isMoving = true
+		return true
+	else
+		return false
 	end
 end
 function Card:mousemoved(x, y)
@@ -82,12 +85,14 @@ function Card:mousereleased(mouseX, mouseY, currentHolder)
 		local halfWidth = value.width / 2
 		local halfHeight = value.height / 2
 		if mouseX > (value.x - halfWidth) and mouseX < (value.x + halfWidth) then
-			lowest = value:getLowestY()
+			local lowest = value:getLowestY()
 			if mouseY > lowest.lastCardY and mouseY < lowest.lowestY then
 				print("is in holder")
-				value:addCard(self)
-				isInHolder = true
-				currentHolder:removeCard(self)
+				-- value:addCard(self)
+				-- isInHolder = true
+				State:setTargetHolder(value)
+				State:transferCards(true)
+				-- currentHolder:removeCard(self)
 			end
 		end
 	end
