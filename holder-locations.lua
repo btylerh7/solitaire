@@ -107,7 +107,7 @@ function HolderLocations:mousemoved(x, y)
 	for index, holder in pairs(self.cardSlots) do
 		for index, card in ipairs(holder.cards) do
 			if card.isMoving == true then
-				card:mousemoved(x, y)
+				card:move(x, y)
 			end
 		end
 	end

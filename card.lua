@@ -1,8 +1,12 @@
---- @class Card
-Card = {}
+require("engine/object")
+--- @class Card: Object
+Card = Object:new()
 Card.__index = Card
 ActiveCards = {}
 
+---@param rank number
+---@param suit number
+---@param isDisplayed boolean
 function Card.new(rank, suit, isDisplayed)
 	--- @class Card
 	local card = setmetatable({}, Card)
@@ -41,9 +45,6 @@ function Card:setQuad()
 	self.quad = quad
 end
 
-function Card:load() end
-
-function Card:update(dt) end
 function Card:updateAll(dt)
 	for i, card in ipairs(ActiveCards) do
 		card:update(dt)
@@ -63,23 +64,10 @@ function Card:drawAll()
 	end
 end
 function Card:mousepressed(x, y)
-	if self:isInBox(x, y) == true then
-		self.startX = self.x
-		self.startY = self.y
-		self.isMoving = true
-		return true
-	else
-		return false
-	end
-end
-function Card:mousemoved(x, y)
-	if self.isMoving == true then
-		self.x = x
-		self.y = y
-	end
+	self:setMoving(x, y)
+	return self.isMoving
 end
 
----@param currentHolder Holder
 function Card:mousereleased(mouseX, mouseY)
 	local isInHolder = false
 	for index, value in ipairs(HolderLocations.cardSlots) do
@@ -103,22 +91,4 @@ function Card:mousereleased(mouseX, mouseY)
 		self.y = self.startY
 	end
 	self.isMoving = false
-end
-
-function Card:isInBox(x, y)
-	local halfWidth = self.width / 2
-	local halfHeight = self.height / 2
-	local minX = self.x - halfWidth
-	local maxX = self.x + halfWidth
-	local minY = self.y - halfHeight
-	local maxY = self.y + halfHeight
-	if x > minX and x < maxX then
-		if y > minY and y < maxY then
-			return true
-		else
-			return false
-		end
-	else
-		return false
-	end
 end

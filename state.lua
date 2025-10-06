@@ -91,14 +91,18 @@ end
 function State:mousereleased(x, y)
 	if #self.currentlyMoving.cards > 0 then
 		local firstCard = self.currentlyMoving.cards[1]
+		local inHolder = false
 		for index, holder in ipairs(HolderLocations.cardSlots) do
 			if holder:isInHolder(x, y) == true then
+				inHolder = true
 				self:setTargetHolder(holder)
 				self:transferCards(true)
 				break
 			end
 		end
-		-- self.currentlyMoving.cards[1]:mousereleased(x, y)
+		if inHolder == false then
+			self:transferCards(false)
+		end
 	end
 	self.isMoving = false
 	self.pressed = false
