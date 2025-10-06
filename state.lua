@@ -13,6 +13,7 @@ CurrentlyMoving.__index = CurrentlyMoving
 ---@field currentlyMoving CurrentlyMoving
 ---@field pressed boolean
 ---@field isMoving boolean
+---@field remainingRedraws number - number of times the draw pile can be reset
 State = {}
 State.__index = State
 
@@ -25,6 +26,7 @@ function State.setup()
 		targetHolder = nil,
 		cards = {},
 	}
+	state.remainingRedraws = 3
 	return state
 end
 

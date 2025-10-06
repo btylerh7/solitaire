@@ -98,6 +98,19 @@ function HolderLocations:drawCard()
 		nextCard.isDragable = true
 		self.drawnPile:addCard(nextCard)
 		self.drawPile:removeCard(#self.drawPile.cards)
+		return
+	end
+	if #self.drawPile == 0 and State.remainingRedraws > 0 then
+		print("time to reset")
+		while #self.drawnPile.cards > 0 do
+			local currentCard = self.drawnPile.cards[#self.drawnPile.cards]
+			currentCard.isDragable = false
+			currentCard.isDisplayed = false
+			self.drawPile:addCard(currentCard)
+			self.drawnPile:removeCard(#self.drawnPile.cards)
+		end
+		State.remainingRedraws = State.remainingRedraws - 1
+		return
 	end
 end
 
