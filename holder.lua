@@ -34,6 +34,9 @@ function Holder:setCardLocation()
 		local currentYStep = (index - 1) * yStep
 		card.x = self.x + currentXStep
 		card.y = self.y + currentYStep
+		if index == #self.cards then
+			card.isInStack = false
+		end
 	end
 end
 
@@ -48,14 +51,20 @@ function Holder:addCard(card)
 	self:setCardLocation()
 end
 
----@param card Card
-function Holder:removeCard(card)
-	for index, currentCard in ipairs(self.cards) do
-		if card.rank == currentCard.rank and card.suit == currentCard.suit then
-			table.remove(self.cards, index)
-			return
-		end
+---@param index number - index of card to be removed
+function Holder:removeCard(index)
+	local startingTotal = #self.cards
+	table.remove(self.cards, index)
+	if #self.cards == startingTotal then
+		print("error, card not removed properly")
 	end
+	-- for index, currentCard in ipairs(self.cards) do
+	-- 	if card.rank == currentCard.rank and card.suit == currentCard.suit then
+	-- 		table.remove(self.cards, index)
+	-- 		self:setCardLocation()
+	-- 		return
+	-- 	end
+	-- end
 end
 
 function Holder:load() end

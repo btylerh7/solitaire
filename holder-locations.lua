@@ -91,11 +91,15 @@ function HolderLocations:drawAll()
 end
 
 function HolderLocations:mousepressed(x, y)
-	for index, holder in pairs(self.cardSlots) do
+	for _, holder in pairs(self.cardSlots) do
 		for index, card in ipairs(holder.cards) do
 			if card.isDragable == true then
 				card:mousepressed(x, y)
 				if card.isMoving == true then
+					print("clicked card is")
+					print(index)
+					print("total is")
+					print(#holder.cards)
 					State:setMoving(holder, card)
 					return
 				end

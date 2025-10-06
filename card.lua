@@ -21,6 +21,7 @@ function Card.new(rank, suit, isDisplayed)
 	card.isDisplayed = isDisplayed
 	card.isDragable = false
 	card.isMoving = false
+	card.isInStack = true
 	card.sprite = love.graphics.newImage("assets/1.2 Poker cards.png")
 	return card
 end
@@ -58,14 +59,12 @@ function Card:draw()
 	love.graphics.draw(self.sprite, self.quad, self.x, self.y, nil, 2, 2)
 end
 
-function Card:drawAll()
-	for i, card in ipairs(ActiveCards) do
-		card:draw()
-	end
-end
 function Card:mousepressed(x, y)
-	self:setMoving(x, y)
-	return self.isMoving
+	if self.isInStack == true then
+		self:setMoving(x, y, 20)
+	else
+		self:setMoving(x, y)
+	end
 end
 
 function Card:mousereleased(mouseX, mouseY)

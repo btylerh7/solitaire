@@ -33,22 +33,26 @@ end
 --- Removes clicked card and rest of cards from holder and puts in currentlyMoving
 function State:setMoving(holder, clickedCard)
 	self.isMoving = true
-	local toRemove = {}
+	local toRemove = 0
+	local toRemoveStartIndex = 0
 	local found = false
 	self.currentlyMoving.holder = holder
 	for index, card in ipairs(holder.cards) do
 		if clickedCard.rank == card.rank and clickedCard.suit == card.suit then
+			toRemoveStartIndex = index
 			found = true
 		end
 		if found == true then
 			table.insert(self.currentlyMoving.cards, card)
-			table.insert(toRemove, index)
+			toRemove = toRemove + 1
 			-- TODO maybe add index optional to not have to do loops to remove it?
 		end
 	end
-	for _, value in ipairs(toRemove) do
-		table.remove(holder.cards, value)
+	while toRemove > 0 do
+		holder:removeCard(toRemoveStartIndex)
+		toRemove = toRemove - 1
 	end
+	holder:setCardLocation()
 end
 
 function State:draw()
@@ -90,9 +94,8 @@ end
 
 function State:mousereleased(x, y)
 	if #self.currentlyMoving.cards > 0 then
-		local firstCard = self.currentlyMoving.cards[1]
 		local inHolder = false
-		for index, holder in ipairs(HolderLocations.cardSlots) do
+		for _, holder in ipairs(HolderLocations.cardSlots) do
 			if holder:isInHolder(x, y) == true then
 				inHolder = true
 				self:setTargetHolder(holder)
@@ -111,5 +114,4 @@ function State:mousereleased(x, y)
 		targetHolder = nil,
 		cards = {},
 	}
-	-- self.currentlyMoving.cards.cards[1]:mousereleased(x, y, )
 end
