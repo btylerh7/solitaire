@@ -1,11 +1,11 @@
 ---@class CurrentlyMoving
 ---@field holder Holder | nil
 ---@field targetHolder Holder | nil
----@field cards Holder | nil
+---@field cards Card[]
 CurrentlyMoving = {
 	holder = nil,
 	targetHolder = nil,
-	cards = nil,
+	cards = {},
 }
 CurrentlyMoving.__index = CurrentlyMoving
 
@@ -23,7 +23,7 @@ function State.setup()
 	state.currentlyMoving = {
 		holder = nil,
 		targetHolder = nil,
-		cards = nil,
+		cards = {},
 	}
 	return state
 end
@@ -33,27 +33,29 @@ end
 --- Removes clicked card and rest of cards from holder and puts in currentlyMoving
 function State:setMoving(holder, clickedCard)
 	self.isMoving = true
-	self.currentlyMoving.cards = Holder.new(clickedCard.x, clickedCard.y, "game")
+	local toRemove = {}
 	local found = false
 	self.currentlyMoving.holder = holder
 	for index, card in ipairs(holder.cards) do
-		if found == true then
-			self.currentlyMoving.cards:addCard(card)
-			-- TODO maybe add index optional to not have to do loops to remove it?
-			holder:removeCard(card)
-		else
-			if clickedCard.rank == card.rank and clickedCard.suit == card.suit then
-				found = true
-				self.currentlyMoving.cards:addCard(card)
-				holder:removeCard(card)
-			end
+		if clickedCard.rank == card.rank and clickedCard.suit == card.suit then
+			found = true
 		end
+		if found == true then
+			table.insert(self.currentlyMoving.cards, card)
+			table.insert(toRemove, index)
+			-- TODO maybe add index optional to not have to do loops to remove it?
+		end
+	end
+	for _, value in ipairs(toRemove) do
+		table.remove(holder.cards, value)
 	end
 end
 
 function State:draw()
-	if self.pressed == true and self.isMoving and not self.currentlyMoving.cards == nil then
-		self.currentlyMoving.cards:draw()
+	if self.pressed == true and self.isMoving == true and (self.currentlyMoving.cards == nil) == false then
+		for index, card in ipairs(self.currentlyMoving.cards) do
+			card:draw()
+		end
 	end
 end
 
@@ -64,8 +66,13 @@ function State:setTargetHolder(holder)
 end
 
 function State:moveCard(x, y)
-	if self.currentlyMoving.cards[1] and self.currentlyMoving.cards[1].isMoving == true then
-		self.currentlyMoving.cards[1]:mousemoved(x, y)
+	local hasCards = #self.currentlyMoving.cards > 0
+	if hasCards == true and self.isMoving == true and self.pressed == true then
+		for index, card in ipairs(self.currentlyMoving.cards) do
+			local yOffset = 20 * (index - 1)
+			card.x = x
+			card.y = y + yOffset
+		end
 	end
 end
 
@@ -82,12 +89,23 @@ function State:transferCards(shouldMove)
 end
 
 function State:mousereleased(x, y)
+	if #self.currentlyMoving.cards > 0 then
+		local firstCard = self.currentlyMoving.cards[1]
+		for index, holder in ipairs(HolderLocations.cardSlots) do
+			if holder:isInHolder(x, y) == true then
+				self:setTargetHolder(holder)
+				self:transferCards(true)
+				break
+			end
+		end
+		-- self.currentlyMoving.cards[1]:mousereleased(x, y)
+	end
 	self.isMoving = false
 	self.pressed = false
 	self.currentlyMoving = {
 		holder = nil,
 		targetHolder = nil,
-		cards = nil,
+		cards = {},
 	}
 	-- self.currentlyMoving.cards.cards[1]:mousereleased(x, y, )
 end

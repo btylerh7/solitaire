@@ -53,7 +53,8 @@ end
 function Card:draw()
 	self:setQuad()
 	-- love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
-	love.graphics.draw(self.sprite, self.quad, self.x, self.y)
+	love.graphics.setBlendMode("alpha", "alphamultiply")
+	love.graphics.draw(self.sprite, self.quad, self.x, self.y, nil, 2, 2)
 end
 
 function Card:drawAll()
@@ -79,7 +80,7 @@ function Card:mousemoved(x, y)
 end
 
 ---@param currentHolder Holder
-function Card:mousereleased(mouseX, mouseY, currentHolder)
+function Card:mousereleased(mouseX, mouseY)
 	local isInHolder = false
 	for index, value in ipairs(HolderLocations.cardSlots) do
 		local halfWidth = value.width / 2

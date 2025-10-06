@@ -115,6 +115,9 @@ end
 
 function HolderLocations:mousereleased(x, y)
 	for index, holder in pairs(self.cardSlots) do
+		if #State.currentlyMoving.cards > 0 then
+			State.currentlyMoving.cards[1]:mousereleased(x, y, holder)
+		end
 		for index, card in ipairs(holder.cards) do
 			if card.isMoving == true then
 				card:mousereleased(x, y, holder)

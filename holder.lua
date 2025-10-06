@@ -39,6 +39,7 @@ end
 
 ---@param card Card
 function Holder:addCard(card)
+	card.isMoving = false
 	table.insert(self.cards, card)
 	if self.type == "game" then
 		card.y = (#self.cards * 20) + self.y
@@ -67,7 +68,7 @@ end
 function Holder:draw()
 	if not next(self.cards) then
 		love.graphics.setColor(0.21, 0.30, 0.16)
-		love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
+		love.graphics.rectangle("fill", self.x, self.y, self.width * 2, self.height * 2)
 		love.graphics.setColor(1, 1, 1)
 	end
 	for index, card in ipairs(self.cards) do
@@ -79,4 +80,20 @@ function Holder:getLowestY()
 	local lastCard = self.cards[#self.cards]
 	local lowestY = lastCard.y + lastCard.height
 	return { lowestY = lowestY, lastCardY = lastCard.y }
+end
+
+---@param mouseX number
+---@param mouseY number
+---@return boolean
+function Holder:isInHolder(mouseX, mouseY)
+	local halfWidth = self.width / 2
+	local lowest = self:getLowestY()
+
+	local minX = self.x - halfWidth
+	local maxX = self.x + halfWidth
+
+	local isInX = mouseX > minX and mouseX < maxX
+	local isInY = mouseY > lowest.lastCardY and mouseY < lowest.lowestY
+
+	return isInX == true and isInY == true
 end

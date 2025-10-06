@@ -1,5 +1,5 @@
 require("card")
-require("card-holder")
+require("holder")
 require("holder-locations")
 require("all-cards")
 require("state")
@@ -33,14 +33,11 @@ function love.mousepressed(x, y, button, isTouched)
 	end
 end
 function love.mousemoved(x, y)
-	if State.pressed == true then
-		State:moveCard(x, y)
-		-- HolderLocations:mousemoved(x, y)
-	end
+	State:moveCard(x, y)
 end
 function love.mousereleased(x, y, button)
 	if button == 1 then
 		State.pressed = false
-		HolderLocations:mousereleased(x, y)
+		State:mousereleased(x, y)
 	end
 end
