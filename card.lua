@@ -14,8 +14,8 @@ function Card.new(rank, suit, isDisplayed)
 	card.y = 0
 	card.startX = 0
 	card.startY = 0
-	card.width = 100
-	card.height = 150
+	card.width = G.cardWidth * G.zoomMultiplier
+	card.height = G.cardHeight * G.zoomMultiplier
 	card.rank = rank
 	card.suit = suit
 	card.isDisplayed = isDisplayed
@@ -54,7 +54,6 @@ end
 
 function Card:draw()
 	self:setQuad()
-	-- love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
 	love.graphics.setBlendMode("alpha", "alphamultiply")
 	love.graphics.draw(self.sprite, self.quad, self.x, self.y, nil, G.zoomMultiplier, G.zoomMultiplier)
 end
@@ -69,10 +68,10 @@ end
 
 function Card:mousereleased(mouseX, mouseY)
 	local isInHolder = false
-	for index, value in ipairs(HolderLocations.cardSlots) do
+	for _, value in ipairs(HolderLocations.cardSlots) do
 		local halfWidth = value.width / 2
-		local halfHeight = value.height / 2
-		if mouseX > (value.x - halfWidth) and mouseX < (value.x + halfWidth) then
+		if mouseX > value.x and mouseX < value.x + value.width then
+			--if mouseX > (value.x - halfWidth) and mouseX < (value.x + halfWidth) then
 			local lowest = value:getLowestY()
 			if mouseY > lowest.lastCardY and mouseY < lowest.lowestY then
 				print("is in holder")

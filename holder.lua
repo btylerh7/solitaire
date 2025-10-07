@@ -66,13 +66,6 @@ function Holder:removeCard(index)
 	if #self.cards == 0 then
 		return
 	end
-	-- for index, currentCard in ipairs(self.cards) do
-	-- 	if card.rank == currentCard.rank and card.suit == currentCard.suit then
-	-- 		table.remove(self.cards, index)
-	-- 		self:setCardLocation()
-	-- 		return
-	-- 	end
-	-- end
 end
 
 function Holder:load() end
@@ -106,14 +99,9 @@ end
 ---@param mouseY number
 ---@return boolean
 function Holder:isInHolder(mouseX, mouseY)
-	print("mouse x and y")
-	print(mouseX)
-	print(mouseY)
-	local halfWidth = self.width / 2
 	local lowest = self:getLowestY()
-
 	local minX = self.x
-	local maxX = self.x + self.width
+	local maxX = self.x + (self.width * G.zoomMultiplier)
 
 	local isInX = mouseX > minX and mouseX < maxX
 	local isInY = mouseY > lowest.lastCardY and mouseY < lowest.lowestY
