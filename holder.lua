@@ -33,6 +33,8 @@ function Holder:setCardLocation()
 		card.y = self.y + currentYStep
 		if index == #self.cards then
 			card.isInStack = false
+		else
+			card.isInStack = true
 		end
 	end
 end
@@ -54,6 +56,21 @@ function Holder:checkShouldReveal()
 		nextCard.isDisplayed = true
 		nextCard.isDragable = true
 	end
+end
+
+function Holder:checkIsClicked(mouseX, mouseY)
+	for index, card in ipairs(self.cards) do
+		if card.isDragable == true then
+			card:mousepressed(mouseX, mouseY)
+			if card.isMoving == true then
+				print("clicked card is")
+				print(card.rank)
+				State:setMoving(self, card)
+				return true
+			end
+		end
+	end
+	return false
 end
 
 ---@param index number - index of card to be removed

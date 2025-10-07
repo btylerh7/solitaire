@@ -121,18 +121,9 @@ function HolderLocations:mousepressed(x, y)
 	end
 
 	for _, holder in pairs(self.cardSlots) do
-		for index, card in ipairs(holder.cards) do
-			if card.isDragable == true then
-				card:mousepressed(x, y)
-				if card.isMoving == true then
-					print("clicked card is")
-					print(index)
-					print("total is")
-					print(#holder.cards)
-					State:setMoving(holder, card)
-					return
-				end
-			end
+		local result = holder:checkIsClicked(x, y)
+		if result == true then
+			break
 		end
 	end
 	if #self.drawnPile.cards > 0 then

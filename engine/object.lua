@@ -26,9 +26,15 @@ end
 function Object:isInBox(x, y, maxHeight)
 	local minX = self.x
 	local maxX = self.x + self.width
-	local clickableY = self:getClickableY(maxHeight)
+	local maxY = 0
+	if maxHeight then
+		maxY = maxHeight + self.y
+	else
+		maxY = self.height + self.y
+	end
+
 	if x > minX and x < maxX then
-		if y > clickableY.topY and y < clickableY.maxY then
+		if y > self.y and y < maxY then
 			return true
 		else
 			return false
@@ -38,15 +44,9 @@ function Object:isInBox(x, y, maxHeight)
 	end
 end
 
-function Object:getClickableY(maxHeight)
-	local topY = self.y
-	local maxY = topY + (maxHeight or (self.height + (self.height / 2)))
-	return { topY = topY, maxY = maxY }
-end
-
 function Object:setMoving(x, y, maxHeight)
-	local clickableY = self:getClickableY()
-	if y < clickableY.topY then
+	local topY = self.y
+	if y < topY then
 		self.isMoving = false
 		return
 	end
