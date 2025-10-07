@@ -1,7 +1,7 @@
 AllCards = {}
 
 function AllCards:loadCards()
-	for i = 1, 12, 1 do
+	for i = 1, 13, 1 do
 		table.insert(AllCards, Card.new(i, 1, false))
 		table.insert(AllCards, Card.new(i, 2, false))
 		table.insert(AllCards, Card.new(i, 3, false))

@@ -102,7 +102,9 @@ function State:mousereleased(x, y)
 			if holder:isInHolder(x, y) == true then
 				inHolder = true
 				self:setTargetHolder(holder)
-				self:transferCards(true)
+				local currentCard = self.currentlyMoving.cards[1]
+				local shouldMove = holder:checkCanAdd(currentCard.rank, currentCard.suit)
+				self:transferCards(shouldMove)
 				break
 			end
 		end

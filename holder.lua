@@ -3,6 +3,8 @@
 --- @field y number
 --- @field width number
 --- @field height number
+--- @field lowestRank number | nil
+--- @field lowestSuit number | nil
 --- @field type string
 --- @field cards Card[]
 Holder = {}
@@ -26,6 +28,10 @@ function Holder:setCardLocation()
 	if self.type == "game" then
 		yStep = 20
 	end
+	if #self.cards == 0 then
+		self.lowestSuit = nil
+		self.lowestRank = nil
+	end
 	for index, card in ipairs(self.cards) do
 		local currentXStep = (index - 1) * xStep
 		local currentYStep = (index - 1) * yStep
@@ -33,6 +39,8 @@ function Holder:setCardLocation()
 		card.y = self.y + currentYStep
 		if index == #self.cards then
 			card.isInStack = false
+			self.lowestRank = card.rank
+			self.lowestSuit = card.suit
 		else
 			card.isInStack = true
 		end
@@ -48,6 +56,31 @@ function Holder:addCard(card)
 		card.x = self.x
 	end
 	self:setCardLocation()
+end
+
+function Holder:checkCanAdd(rank, suit)
+	print("rank is")
+	print(rank)
+	if #self.cards == 0 and rank == 13 then
+		return true
+	end
+	-- Hearts or diamonds
+	local result = false
+	if self.lowestSuit == 1 or self.lowestSuit == 2 then
+		result = suit == 3 or suit == 4
+	end
+	if self.lowestSuit == 3 or self.lowestSuit == 4 then
+		result = suit == 1 or suit == 2
+	end
+	if result == false then
+		return false
+	end
+	-- If card is 1 lower than current rank
+	if self.lowestRank - 1 == rank and rank > 1 then
+		return true
+	else
+		return false
+	end
 end
 
 function Holder:checkShouldReveal()

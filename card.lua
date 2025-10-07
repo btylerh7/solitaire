@@ -27,8 +27,6 @@ function Card.new(rank, suit, isDisplayed)
 end
 
 function Card:setQuad()
-	local columns = 15
-	local rows = 5
 	local width = self.sprite:getWidth()
 	local height = self.sprite:getHeight()
 	local cardWidth = G.cardWidth
@@ -40,7 +38,8 @@ function Card:setQuad()
 		rowNumber = 5
 	end
 	-- Rank will match card number (ex. 2 of hearts will have rank 2)
-	local startX = columnNumber * cardWidth
+	-- Starts on X = 0 so columnNumber - 1
+	local startX = (columnNumber - 1) * cardWidth
 	local startY = (rowNumber * cardHeight) - cardHeight
 	local quad = love.graphics.newQuad(startX, startY, cardWidth, cardHeight, width, height)
 	self.quad = quad
