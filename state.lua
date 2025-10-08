@@ -12,8 +12,11 @@ CurrentlyMoving.__index = CurrentlyMoving
 ---@class State
 ---@field currentlyMoving CurrentlyMoving
 ---@field pressed boolean
+---@field lastClick number - number of clicks within interval
+---@field clickInterval number - number of seconds between clicks
 ---@field isMoving boolean
 ---@field remainingRedraws number - number of times the draw pile can be reset
+---@field doubleClick boolean
 State = {}
 State.__index = State
 
@@ -21,6 +24,8 @@ function State.setup()
 	local state = setmetatable({}, State)
 	state.pressed = false
 	state.isMoving = false
+	state.clickInterval = 0.2
+	state.lastClick = 0
 	state.currentlyMoving = {
 		holder = nil,
 		targetHolder = nil,
@@ -55,6 +60,16 @@ function State:setMoving(holder, clickedCard)
 		toRemove = toRemove - 1
 	end
 	holder:setCardLocation()
+end
+
+function State:checkDoubleClick()
+	local time = os.time()
+	if time < self.lastClick + self.clickInterval then
+		self.doubleClick = true
+	else
+		self.lastClick = time
+		self.doubleClick = false
+	end
 end
 
 function State:draw()
@@ -95,6 +110,22 @@ function State:transferCards(shouldMove)
 	end
 end
 
+---@param card Card
+--- Add to ace slot if available
+function State:checkAceSlots(card)
+	for _, holder in ipairs(HolderLocations.aceSlots) do
+		local canAdd = holder:checkCanAdd(card.rank, card.suit)
+		if canAdd == true then
+			print("Adding to ace holder")
+			print(card.rank)
+			print(card.suit)
+			self:setTargetHolder(holder)
+			self:transferCards(canAdd)
+		end
+		self.doubleClick = false
+		return
+	end
+end
 function State:mousereleased(x, y)
 	if #self.currentlyMoving.cards > 0 then
 		local inHolder = false
@@ -103,8 +134,15 @@ function State:mousereleased(x, y)
 				inHolder = true
 				self:setTargetHolder(holder)
 				local currentCard = self.currentlyMoving.cards[1]
-				local shouldMove = holder:checkCanAdd(currentCard.rank, currentCard.suit)
-				self:transferCards(shouldMove)
+				if self.doubleClick == true then
+					if #self.currentlyMoving.cards == 1 then
+						self:checkAceSlots(currentCard)
+					end
+				end
+				if self.doubleClick == false then
+					local shouldMove = holder:checkCanAdd(currentCard.rank, currentCard.suit)
+					self:transferCards(shouldMove)
+				end
 				break
 			end
 		end

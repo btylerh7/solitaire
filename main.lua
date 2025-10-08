@@ -30,6 +30,7 @@ end
 function love.mousepressed(x, y, button, isTouched)
 	if button == 1 then
 		State.pressed = true
+		State:checkDoubleClick()
 		HolderLocations:mousepressed(x, y)
 	end
 end

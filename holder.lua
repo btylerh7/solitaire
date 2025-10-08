@@ -7,6 +7,8 @@
 --- @field lowestSuit number | nil
 --- @field type string
 --- @field cards Card[]
+--- @field rank number | nil -- for ace type
+--- @field suit number | nil -- for ace type
 Holder = {}
 Holder.__index = Holder
 
@@ -59,8 +61,17 @@ function Holder:addCard(card)
 end
 
 function Holder:checkCanAdd(rank, suit)
-	print("rank is")
-	print(rank)
+	if self.type == "ace" then
+		if self.suit == nil then
+			return rank == 1
+		end
+		if self.suit == suit then
+			local lastRank = self.cards[#self.cards]
+			print(lastRank.rank)
+			return rank == (self.cards[#self.cards].rank + 1)
+		end
+		return false
+	end
 	if #self.cards == 0 and rank == 13 then
 		return true
 	end
