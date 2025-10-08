@@ -1,6 +1,6 @@
 require("engine/object")
---- @class Card: Object
-Card = Object:new()
+---@class Card:Object
+Card = Object:extend()
 Card.__index = Card
 ActiveCards = {}
 
@@ -10,7 +10,6 @@ ActiveCards = {}
 function Card.new(rank, suit, isDisplayed)
 	--- @class Card
 	local card = setmetatable({}, Card)
-	card.x = 0
 	card.y = 0
 	card.startX = 0
 	card.startY = 0

@@ -10,36 +10,36 @@ function steppedX(startingValue, index)
 end
 
 ---@class HolderLocations
----@field cardSlots Holder[]
+---@field cardSlots GameHolder[]
 ---@field aceSlots Holder[]
 HolderLocations = {}
 
 function HolderLocations:setup()
 	local startX = LocationConfig.leftSideX
 	local startY = LocationConfig.topRowY
-	HolderLocations.drawPile = Holder.new(steppedX(startX, 1), startY, "draw")
-	HolderLocations.drawnPile = Holder.new(steppedX(startX, 2), startY, "drawn")
+	HolderLocations.drawPile = Holder:new(steppedX(startX, 1), startY, "draw")
+	HolderLocations.drawnPile = Holder:new(steppedX(startX, 2), startY, "drawn")
 
 	startX = LocationConfig.aceAreaX
 	startY = LocationConfig.topRowY
 	HolderLocations.aceSlots = {}
 	HolderLocations.cardSlots = {}
 
-	table.insert(HolderLocations.aceSlots, Holder.new(steppedX(startX, 1), startY, "ace"))
-	table.insert(HolderLocations.aceSlots, Holder.new(steppedX(startX, 2), startY, "ace"))
-	table.insert(HolderLocations.aceSlots, Holder.new(steppedX(startX, 3), startY, "ace"))
-	table.insert(HolderLocations.aceSlots, Holder.new(steppedX(startX, 4), startY, "ace"))
+	table.insert(HolderLocations.aceSlots, AceHolder:new(steppedX(startX, 1), startY, "ace"))
+	table.insert(HolderLocations.aceSlots, AceHolder:new(steppedX(startX, 2), startY, "ace"))
+	table.insert(HolderLocations.aceSlots, AceHolder:new(steppedX(startX, 3), startY, "ace"))
+	table.insert(HolderLocations.aceSlots, AceHolder:new(steppedX(startX, 4), startY, "ace"))
 
 	startX = LocationConfig.leftSideX
 	startY = LocationConfig.cardRowY
 
-	table.insert(HolderLocations.cardSlots, Holder.new(steppedX(startX, 1), startY, "game"))
-	table.insert(HolderLocations.cardSlots, Holder.new(steppedX(startX, 2), startY, "game"))
-	table.insert(HolderLocations.cardSlots, Holder.new(steppedX(startX, 3), startY, "game"))
-	table.insert(HolderLocations.cardSlots, Holder.new(steppedX(startX, 4), startY, "game"))
-	table.insert(HolderLocations.cardSlots, Holder.new(steppedX(startX, 5), startY, "game"))
-	table.insert(HolderLocations.cardSlots, Holder.new(steppedX(startX, 6), startY, "game"))
-	table.insert(HolderLocations.cardSlots, Holder.new(steppedX(startX, 7), startY, "game"))
+	table.insert(HolderLocations.cardSlots, GameHolder:new(steppedX(startX, 1), startY, "game"))
+	table.insert(HolderLocations.cardSlots, GameHolder:new(steppedX(startX, 2), startY, "game"))
+	table.insert(HolderLocations.cardSlots, GameHolder:new(steppedX(startX, 3), startY, "game"))
+	table.insert(HolderLocations.cardSlots, GameHolder:new(steppedX(startX, 4), startY, "game"))
+	table.insert(HolderLocations.cardSlots, GameHolder:new(steppedX(startX, 5), startY, "game"))
+	table.insert(HolderLocations.cardSlots, GameHolder:new(steppedX(startX, 6), startY, "game"))
+	table.insert(HolderLocations.cardSlots, GameHolder:new(steppedX(startX, 7), startY, "game"))
 end
 
 ---@param cards Card[]

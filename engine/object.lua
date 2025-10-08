@@ -1,15 +1,20 @@
----@class Object
----@field isMoving boolean
+require("engine/base")
+---@class Object: Base
 ---@field x number
 ---@field y number
 ---@field width number
 ---@field height number
-Object = {}
-Object.__index = Object
+Object = Base:extend()
 
+function Object:init()
+	self:new()
+end
 function Object:new()
-	local object = setmetatable({}, Object)
-	return object
+	self.isMoving = false
+	self.x = 0
+	self.y = 0
+	self.width = 0
+	self.height = 0
 end
 function Object:load() end
 

@@ -1,5 +1,7 @@
 require("card")
 require("holder")
+require("holder-game")
+require("holder-ace")
 require("holder-locations")
 require("all-cards")
 require("state")

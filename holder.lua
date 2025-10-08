@@ -1,19 +1,17 @@
---- @class Holder
+--- @class Holder:Base
 --- @field x number
 --- @field y number
 --- @field width number
 --- @field height number
---- @field lowestRank number | nil
---- @field lowestSuit number | nil
 --- @field type string
 --- @field cards Card[]
 --- @field rank number | nil -- for ace type
 --- @field suit number | nil -- for ace type
-Holder = {}
-Holder.__index = Holder
+Holder = Base:extend()
 
-function Holder.new(x, y, type)
-	local holder = setmetatable({}, Holder)
+function Holder:new(x, y, type)
+	---@class Holder:Base
+	local holder = setmetatable({}, self)
 	holder.x = x
 	holder.y = y
 	holder.width = G.cardWidth
@@ -25,27 +23,9 @@ function Holder.new(x, y, type)
 end
 
 function Holder:setCardLocation()
-	local yStep = 0
-	local xStep = 0
-	if self.type == "game" then
-		yStep = 20
-	end
-	if #self.cards == 0 then
-		self.lowestSuit = nil
-		self.lowestRank = nil
-	end
-	for index, card in ipairs(self.cards) do
-		local currentXStep = (index - 1) * xStep
-		local currentYStep = (index - 1) * yStep
-		card.x = self.x + currentXStep
-		card.y = self.y + currentYStep
-		if index == #self.cards then
-			card.isInStack = false
-			self.lowestRank = card.rank
-			self.lowestSuit = card.suit
-		else
-			card.isInStack = true
-		end
+	for _, card in ipairs(self.cards) do
+		card.x = self.x
+		card.y = self.y
 	end
 end
 
@@ -58,40 +38,6 @@ function Holder:addCard(card)
 		card.x = self.x
 	end
 	self:setCardLocation()
-end
-
-function Holder:checkCanAdd(rank, suit)
-	if self.type == "ace" then
-		if self.suit == nil then
-			return rank == 1
-		end
-		if self.suit == suit then
-			local lastRank = self.cards[#self.cards]
-			print(lastRank.rank)
-			return rank == (self.cards[#self.cards].rank + 1)
-		end
-		return false
-	end
-	if #self.cards == 0 and rank == 13 then
-		return true
-	end
-	-- Hearts or diamonds
-	local result = false
-	if self.lowestSuit == 1 or self.lowestSuit == 2 then
-		result = suit == 3 or suit == 4
-	end
-	if self.lowestSuit == 3 or self.lowestSuit == 4 then
-		result = suit == 1 or suit == 2
-	end
-	if result == false then
-		return false
-	end
-	-- If card is 1 lower than current rank
-	if self.lowestRank - 1 == rank and rank > 1 then
-		return true
-	else
-		return false
-	end
 end
 
 function Holder:checkShouldReveal()
