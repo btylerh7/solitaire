@@ -11,14 +11,14 @@ end
 
 ---@class HolderLocations
 ---@field cardSlots GameHolder[]
----@field aceSlots Holder[]
+---@field aceSlots AceHolder[]
 HolderLocations = {}
 
 function HolderLocations:setup()
 	local startX = LocationConfig.leftSideX
 	local startY = LocationConfig.topRowY
-	HolderLocations.drawPile = Holder:new(steppedX(startX, 1), startY, "draw")
-	HolderLocations.drawnPile = Holder:new(steppedX(startX, 2), startY, "drawn")
+	HolderLocations.drawPile = DrawHolder:new(steppedX(startX, 1), startY, "draw")
+	HolderLocations.drawnPile = DrawHolder:new(steppedX(startX, 2), startY, "drawn")
 
 	startX = LocationConfig.aceAreaX
 	startY = LocationConfig.topRowY

@@ -2,6 +2,7 @@ require("card")
 require("holder")
 require("holder-game")
 require("holder-ace")
+require("holder-draw")
 require("holder-locations")
 require("all-cards")
 require("state")
@@ -10,7 +11,7 @@ G = {}
 G.cardWidth = 48
 G.cardHeight = 64
 G.zoomMultiplier = 2
-State = State:setup()
+State = State:new()
 
 function love.load()
 	HolderLocations:setup()

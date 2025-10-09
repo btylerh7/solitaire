@@ -20,19 +20,22 @@ CurrentlyMoving.__index = CurrentlyMoving
 State = {}
 State.__index = State
 
-function State.setup()
+function State.new()
 	local state = setmetatable({}, State)
-	state.pressed = false
-	state.isMoving = false
-	state.clickInterval = 0.2
-	state.lastClick = 0
-	state.currentlyMoving = {
+	state:setup()
+	return state
+end
+function State:setup()
+	self.pressed = false
+	self.isMoving = false
+	self.clickInterval = 0.2
+	self.lastClick = 0
+	self.currentlyMoving = {
 		holder = nil,
 		targetHolder = nil,
 		cards = {},
 	}
-	state.remainingRedraws = 3
-	return state
+	self.remainingRedraws = 3
 end
 
 ---@param holder Holder
@@ -150,11 +153,5 @@ function State:mousereleased(x, y)
 			self:transferCards(false)
 		end
 	end
-	self.isMoving = false
-	self.pressed = false
-	self.currentlyMoving = {
-		holder = nil,
-		targetHolder = nil,
-		cards = {},
-	}
+	self:setup()
 end

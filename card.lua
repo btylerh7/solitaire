@@ -20,7 +20,7 @@ function Card.new(rank, suit, isDisplayed)
 	card.isDisplayed = isDisplayed
 	card.isDragable = false
 	card.isMoving = false
-	card.isInStack = true
+	card.isInStack = false
 	card.sprite = love.graphics.newImage("assets/1.2 Poker cards.png")
 	return card
 end
