@@ -4,7 +4,6 @@
 GameHolder = Holder:extend()
 
 function GameHolder:setCardLocation()
-	print("game set holder")
 	local yStep = 20
 	if #self.cards == 0 then
 		self.lowestSuit = nil
