@@ -114,41 +114,69 @@ function HolderLocations:drawCard()
 	end
 end
 
+function HolderLocations:getHolderType(x, y)
+	local gameHolder = y > LocationConfig.cardRowY
+	local aceHolder = not gameHolder and x > LocationConfig.aceAreaX
+	local drawPileHolder = not aceHolder and x > LocationConfig.leftSideX
+	if gameHolder then
+		return HolderType.GAME
+	elseif aceHolder then
+		return HolderType.ACE
+	elseif drawPileHolder then
+		return HolderType.DRAW
+	else
+		return nil
+	end
+end
+
 function HolderLocations:mousepressed(x, y)
-	if self.drawPile:isInHolder(x, y) == true then
-		self:drawCard()
+	local holderType = self:getHolderType(x, y)
+	if holderType == nil then
 		return
 	end
 
-	for _, holder in pairs(self.cardSlots) do
-		local result = holder:checkIsClicked(x, y)
-		if result == true then
-			break
-		end
-	end
-	if #self.drawnPile.cards > 0 then
-		local topDrawnCard = self.drawnPile.cards[#self.drawnPile.cards]
-		topDrawnCard:mousepressed(x, y)
-		if topDrawnCard.isMoving == true then
-			State:setMoving(self.drawnPile, topDrawnCard)
+	-- Check if draw pile clicked
+	if holderType == HolderType.DRAW then
+		if self.drawPile:isInHolder(x, y) == true then
+			self:drawCard()
 			return
 		end
 	end
-	for index, card in ipairs(self.drawnPile.cards) do
-		if card.isDragable == true then
-			card:mousepressed(x, y)
-			if card.isMoving == true then
-				print("clicked card is")
-				print(index)
-				print("total is")
-				print(#holder.cards)
+
+	-- Check if game holder card clicked
+	if holderType == HolderType.GAME then
+		for _, holder in pairs(self.cardSlots) do
+			local result = holder:checkIsClicked(x, y)
+			if result == true then
+				break
+			end
+		end
+	end
+
+	-- Check if card in drawn pile clicked
+	if holderType == HolderType.DRAW then
+		if #self.drawnPile.cards > 0 then
+			local topDrawnCard = self.drawnPile.cards[#self.drawnPile.cards]
+			topDrawnCard:mousepressed(x, y)
+			if topDrawnCard.isMoving == true then
+				State:setMoving(self.drawnPile, topDrawnCard)
+				return
+			end
+		end
+		for _, card in ipairs(self.drawnPile.cards) do
+			if card.isDragable then
+				if card:isInBox(x, y) then
+					card:setMoving(x, y, 20)
+				else
+					card:setMoving(x, y)
+				end
 			end
 		end
 	end
 end
-function HolderLocations:mousemoved(x, y)
-	for index, holder in pairs(self.cardSlots) do
-		for index, card in ipairs(holder.cards) do
+function HolderLocations:move(x, y)
+	for _, holder in pairs(self.cardSlots) do
+		for _, card in ipairs(holder.cards) do
 			if card.isMoving == true then
 				card:move(x, y)
 			end

@@ -130,19 +130,31 @@ function State:checkAceSlots(card)
 	end
 end
 function State:mousereleased(x, y)
+	local holderType = HolderLocations:getHolderType(x, y)
+
 	if #self.currentlyMoving.cards > 0 then
 		local inHolder = false
+		if holderType == HolderType.ACE then
+			for _, holder in ipairs(HolderLocations.aceSlots) do
+				if holder:isInHolder(x, y) then
+					inHolder = true
+					self:setTargetHolder(holder)
+					local currentCard = self.currentlyMoving.cards[1]
+					local shouldMove = holder:checkCanAdd(currentCard.rank, currentCard.suit)
+					self:transferCards(shouldMove)
+				end
+			end
+		end
 		for _, holder in ipairs(HolderLocations.cardSlots) do
 			if holder:isInHolder(x, y) == true then
 				inHolder = true
 				self:setTargetHolder(holder)
 				local currentCard = self.currentlyMoving.cards[1]
-				if self.doubleClick == true then
-					if #self.currentlyMoving.cards == 1 then
-						self:checkAceSlots(currentCard)
-					end
+				if self.doubleClick and #self.currentlyMoving.cards == 1 then
+					print("checking ace slots")
+					self:checkAceSlots(currentCard)
 				end
-				if self.doubleClick == false then
+				if not self.doubleClick then
 					local shouldMove = holder:checkCanAdd(currentCard.rank, currentCard.suit)
 					self:transferCards(shouldMove)
 				end

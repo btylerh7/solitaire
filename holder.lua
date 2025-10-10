@@ -1,3 +1,10 @@
+---@class HolderType
+HolderType = {
+	ACE = "ace",
+	GAME = "game",
+	DRAW = "draw",
+}
+
 --- @class Holder:Base
 --- @field x number
 --- @field y number
@@ -9,6 +16,9 @@
 --- @field suit number | nil -- for ace type
 Holder = Base:extend()
 
+---@param x number
+---@param y number
+---@param type string
 function Holder:new(x, y, type)
 	---@class Holder:Base
 	local holder = setmetatable({}, self)
@@ -33,28 +43,41 @@ end
 function Holder:addCard(card)
 	card.isMoving = false
 	table.insert(self.cards, card)
-	if self.type == "game" then
+	if self.type == HolderType.GAME then
 		card.y = (#self.cards * 20) + self.y
 		card.x = self.x
 	end
 	self:setCardLocation()
 end
 
+function Holder:hasCards()
+	return #self.cards > 0
+end
+function Holder:lastCard()
+	return self.cards[#self.cards]
+end
+
 function Holder:checkShouldReveal()
-	local nextCard = self.cards[#self.cards]
-	if #self.cards > 0 and self.type == "game" and nextCard.isDisplayed == false then
-		nextCard.isDisplayed = true
-		nextCard.isDragable = true
+	local hasCards = self:hasCards()
+	local isGameHolder = self.type == HolderType.GAME
+	local lastCard = self:lastCard()
+
+	if hasCards and isGameHolder and not lastCard.isDisplayed then
+		lastCard.isDisplayed = true
+		lastCard.isDragable = true
 	end
 end
 
 function Holder:checkIsClicked(mouseX, mouseY)
-	for index, card in ipairs(self.cards) do
+	for _, card in ipairs(self.cards) do
 		if card.isDragable == true then
-			card:mousepressed(mouseX, mouseY)
+			if card.isInStack == true then
+				card:setMoving(mouseX, mouseY, 20)
+			else
+				card:setMoving(mouseX, mouseY)
+			end
+
 			if card.isMoving == true then
-				print("clicked card is")
-				print(card.rank)
 				State:setMoving(self, card)
 				return true
 			end
