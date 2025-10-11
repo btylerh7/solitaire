@@ -30,10 +30,14 @@ function love.draw()
 	State:draw()
 end
 
-function love.mousepressed(x, y, button, isTouched)
+function love.mousepressed(x, y, button, isTouch, presses)
 	if button == 1 then
 		State.pressed = true
-		State:checkDoubleClick()
+		if presses == 2 then
+			State.doubleClick = true
+		else
+			State.doubleClick = false
+		end
 		HolderLocations:mousepressed(x, y)
 	end
 end

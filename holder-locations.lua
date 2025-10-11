@@ -140,6 +140,22 @@ function HolderLocations:mousepressed(x, y)
 		if self.drawPile:isInHolder(x, y) == true then
 			self:drawCard()
 			return
+		elseif #self.drawnPile.cards > 0 then
+			local topDrawnCard = self.drawnPile.cards[#self.drawnPile.cards]
+			topDrawnCard:mousepressed(x, y)
+			if topDrawnCard.isMoving == true then
+				State:setMoving(self.drawnPile, topDrawnCard)
+				return
+			end
+			for _, card in ipairs(self.drawnPile.cards) do
+				if card.isDragable then
+					if card:isInBox(x, y) then
+						card:setMoving(x, y, 20)
+					else
+						card:setMoving(x, y)
+					end
+				end
+			end
 		end
 	end
 
@@ -155,23 +171,6 @@ function HolderLocations:mousepressed(x, y)
 
 	-- Check if card in drawn pile clicked
 	if holderType == HolderType.DRAW then
-		if #self.drawnPile.cards > 0 then
-			local topDrawnCard = self.drawnPile.cards[#self.drawnPile.cards]
-			topDrawnCard:mousepressed(x, y)
-			if topDrawnCard.isMoving == true then
-				State:setMoving(self.drawnPile, topDrawnCard)
-				return
-			end
-		end
-		for _, card in ipairs(self.drawnPile.cards) do
-			if card.isDragable then
-				if card:isInBox(x, y) then
-					card:setMoving(x, y, 20)
-				else
-					card:setMoving(x, y)
-				end
-			end
-		end
 	end
 end
 function HolderLocations:move(x, y)

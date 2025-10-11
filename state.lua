@@ -65,16 +65,6 @@ function State:setMoving(holder, clickedCard)
 	holder:setCardLocation()
 end
 
-function State:checkDoubleClick()
-	local time = os.time()
-	if time < self.lastClick + self.clickInterval then
-		self.doubleClick = true
-	else
-		self.lastClick = time
-		self.doubleClick = false
-	end
-end
-
 function State:draw()
 	if self.pressed == true and self.isMoving == true and (self.currentlyMoving.cards == nil) == false then
 		for index, card in ipairs(self.currentlyMoving.cards) do
