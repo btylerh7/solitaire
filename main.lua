@@ -17,7 +17,7 @@ function love.load()
 	HolderLocations:setup()
 	AllCards:loadCards()
 	AllCards:shuffle()
-	HolderLocations:addShuffledCards(AllCardsShuffled)
+	HolderLocations:addShuffledCards(ActiveCards)
 end
 
 function love.update(dt)
@@ -35,10 +35,11 @@ function love.mousepressed(x, y, button, isTouch, presses)
 		State.pressed = true
 		if presses == 2 then
 			State.doubleClick = true
+			HolderLocations:doubleClicked(x, y)
 		else
-			State.doubleClick = false
+			-- HolderLocations:handleClick(x, y)
+			HolderLocations:mousepressed(x, y)
 		end
-		HolderLocations:mousepressed(x, y)
 	end
 end
 function love.mousemoved(x, y)

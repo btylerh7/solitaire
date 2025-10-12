@@ -28,25 +28,24 @@ function Object:move(x, y)
 	end
 end
 
+function Object:getBoundingBox()
+	return {
+		minX = self.x,
+		maxX = self.x + self.width,
+		minY = self.y,
+		maxY = self.y + self.height,
+	}
+end
+
 function Object:isInBox(x, y, maxHeight)
-	local minX = self.x
-	local maxX = self.x + self.width
-	local maxY = 0
+	local box = self:getBoundingBox()
 	if maxHeight then
-		maxY = maxHeight + self.y
-	else
-		maxY = self.height + self.y
+		box.maxY = box.minY + maxHeight
 	end
 
-	if x > minX and x < maxX then
-		if y > self.y and y < maxY then
-			return true
-		else
-			return false
-		end
-	else
-		return false
-	end
+	local inX = x > box.minX and x < box.maxX
+	local inY = y > box.minY and y < box.maxY
+	return inX and inY
 end
 
 function Object:setMoving(x, y, maxHeight)

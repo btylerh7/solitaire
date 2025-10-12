@@ -15,6 +15,7 @@ function Card.new(rank, suit, isDisplayed)
 	card.startY = 0
 	card.width = G.cardWidth * G.zoomMultiplier
 	card.height = G.cardHeight * G.zoomMultiplier
+	card.stackHeight = 20
 	card.rank = rank
 	card.suit = suit
 	card.isDisplayed = isDisplayed
@@ -22,7 +23,21 @@ function Card.new(rank, suit, isDisplayed)
 	card.isMoving = false
 	card.isInStack = false
 	card.sprite = love.graphics.newImage("assets/1.2 Poker cards.png")
+	card.parentHolder = nil
 	return card
+end
+
+function Card:getBoundingBox()
+	local box = {
+		minX = self.x,
+		maxX = self.x + self.width,
+		minY = self.y,
+		maxY = self.y + self.height,
+	}
+	if self.isInStack then
+		box.maxY = self.y + self.stackHeight
+	end
+	return box
 end
 
 function Card:setQuad()
@@ -56,28 +71,31 @@ function Card:draw()
 	love.graphics.draw(self.sprite, self.quad, self.x, self.y, nil, G.zoomMultiplier, G.zoomMultiplier)
 end
 
-function Card:mousepressed(x, y)
-	if self.isInStack == true then
-		self:setMoving(x, y, 20)
+---@param x number
+---@param y number
+---If x and y are within the box's clickable range, will set its moving value to true
+function Card:setMoving(x, y)
+	local box = self:getBoundingBox()
+	if self:isInBox(x, y, box.maxY) then
+		self.isMoving = true
 	else
-		self:setMoving(x, y)
+		self.isMoving = false
 	end
 end
 
+---@param mouseX number
+---@param mouseY number
+---Checks if the released card is inside a game holder and if it can be added
 function Card:mousereleased(mouseX, mouseY)
 	local isInHolder = false
 	for _, value in ipairs(HolderLocations.cardSlots) do
 		local halfWidth = value.width / 2
 		if mouseX > value.x and mouseX < value.x + value.width then
-			--if mouseX > (value.x - halfWidth) and mouseX < (value.x + halfWidth) then
 			local lowest = value:getLowestY()
 			if mouseY > lowest.lastCardY and mouseY < lowest.lowestY then
 				print("is in holder")
-				-- value:addCard(self)
-				-- isInHolder = true
 				State:setTargetHolder(value)
 				State:transferCards(true)
-				-- currentHolder:removeCard(self)
 			end
 		end
 	end

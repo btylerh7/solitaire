@@ -42,6 +42,7 @@ end
 ---@param card Card
 function Holder:addCard(card)
 	card.isMoving = false
+	card.parentHolder = self
 	table.insert(self.cards, card)
 	if self.type == HolderType.GAME then
 		card.y = (#self.cards * 20) + self.y
@@ -72,7 +73,7 @@ function Holder:checkIsClicked(mouseX, mouseY)
 	for _, card in ipairs(self.cards) do
 		if card.isDragable == true then
 			if card.isInStack == true then
-				card:setMoving(mouseX, mouseY, 20)
+				card:setMoving(mouseX, mouseY)
 			else
 				card:setMoving(mouseX, mouseY)
 			end

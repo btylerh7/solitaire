@@ -1,4 +1,7 @@
 AllCards = {}
+---All Cards that have been shuffled and added to the game
+---@type Card[]
+ActiveCards = {}
 
 function AllCards:loadCards()
 	for i = 1, 13, 1 do
@@ -9,11 +12,11 @@ function AllCards:loadCards()
 	end
 end
 function AllCards:shuffle()
-	AllCardsShuffled = {}
+	ActiveCards = {}
 	math.randomseed(os.time())
 	while #AllCards > 0 do
 		local randomIndex = math.random(1, #AllCards)
-		table.insert(AllCardsShuffled, AllCards[randomIndex])
+		table.insert(ActiveCards, AllCards[randomIndex])
 		table.remove(AllCards, randomIndex)
 	end
 end

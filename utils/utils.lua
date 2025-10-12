@@ -11,13 +11,10 @@ function Utils:isEmpty(table)
 	return #table == 0
 end
 
----@param list table
----@param fn function
-function Utils:map(list, fn)
+function Utils:map(list, fun)
 	local newList = {}
-	for _, value in ipairs(list) do
-		local result = fn(value)
-		table.insert(newList, result)
+	for i, value in ipairs(list) do
+		newList[i] = fun(value)
 	end
 	return newList
 end

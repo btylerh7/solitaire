@@ -90,6 +90,14 @@ function State:moveCard(x, y)
 	end
 end
 
+function State:resetCurrentlyMoving()
+	print("resetting currently moving ")
+	print("currently moving card total is", #self.currentlyMoving.cards)
+	if #self.currentlyMoving.cards == 1 then
+		self.currentlyMoving.holder:addCard(self.currentlyMoving.cards[1])
+	end
+end
+
 ---@param shouldMove boolean
 --- Moves cards from currently moving to selected holder
 function State:transferCards(shouldMove)
@@ -103,22 +111,6 @@ function State:transferCards(shouldMove)
 	end
 end
 
----@param card Card
---- Add to ace slot if available
-function State:checkAceSlots(card)
-	for _, holder in ipairs(HolderLocations.aceSlots) do
-		local canAdd = holder:checkCanAdd(card.rank, card.suit)
-		if canAdd == true then
-			print("Adding to ace holder")
-			print(card.rank)
-			print(card.suit)
-			self:setTargetHolder(holder)
-			self:transferCards(canAdd)
-		end
-		self.doubleClick = false
-		return
-	end
-end
 function State:mousereleased(x, y)
 	local holderType = HolderLocations:getHolderType(x, y)
 
@@ -142,7 +134,7 @@ function State:mousereleased(x, y)
 				local currentCard = self.currentlyMoving.cards[1]
 				if self.doubleClick and #self.currentlyMoving.cards == 1 then
 					print("checking ace slots")
-					self:checkAceSlots(currentCard)
+					HolderLocations:checkAceSlots(currentCard)
 				end
 				if not self.doubleClick then
 					local shouldMove = holder:checkCanAdd(currentCard.rank, currentCard.suit)

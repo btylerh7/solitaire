@@ -11,6 +11,7 @@ function AceHolder:checkCanAdd(rank, suit)
 end
 function AceHolder:addCard(card)
 	card.isMoving = false
+	card.parentHolder = self
 	card.isDragable = false
 	if self.suit == nil then
 		self.suit = card.suit

@@ -1,3 +1,4 @@
+local Utils = require("utils.utils")
 LocationConfig = {
 	stepCount = 125,
 	topRowY = 15,
@@ -44,9 +45,12 @@ end
 
 ---@param cards Card[]
 function HolderLocations:addShuffledCards(cards)
+	local allCards = {}
 	for i = 1, 7, 1 do
 		for _ = 1, i, 1 do
-			self.cardSlots[i]:addCard(table.remove(cards, #cards))
+			local nextCard = table.remove(cards, #cards)
+			table.insert(allCards, nextCard)
+			self.cardSlots[i]:addCard(nextCard)
 		end
 		self.cardSlots[i].cards[i].isDisplayed = true
 		self.cardSlots[i].cards[i].isDragable = true
@@ -54,9 +58,11 @@ function HolderLocations:addShuffledCards(cards)
 	end
 
 	while #cards > 0 do
-		cards[#cards].isDisplayed = false
+		local card = cards[#cards]
+		card.isDisplayed = false
 		self.drawPile:addCard(table.remove(cards, #cards))
 	end
+	ActiveCards = allCards
 end
 
 function HolderLocations:setDisplayed() end
@@ -129,6 +135,86 @@ function HolderLocations:getHolderType(x, y)
 	end
 end
 
+---@param card Card
+--- Add to ace slot if available
+function HolderLocations:checkAceSlots(card)
+	for _, holder in ipairs(self.aceSlots) do
+		local canAdd = holder:checkCanAdd(card.rank, card.suit)
+		if canAdd == true then
+			print("Adding to ace holder")
+			print(card.rank)
+			print(card.suit)
+			State:setTargetHolder(holder)
+			State:transferCards(canAdd)
+			self.doubleClick = false
+			return
+		end
+	end
+	self.doubleClick = false
+	return
+end
+
+function HolderLocations:doubleClicked(x, y)
+	print("checking double click")
+	local holderType = self:getHolderType(x, y)
+	if holderType == HolderType.ACE then
+		return
+	end
+	print("Holder type is ", holderType)
+
+	if holderType == HolderType.DRAW then
+		local isClicked = self.drawnPile:checkIsClicked(x, y)
+	end
+	if holderType == HolderType.GAME then
+		---@type GameHolder | nil
+		local clickedHolder = nil
+		for _, holder in ipairs(self.cardSlots) do
+			if holder:checkIsClicked(x, y) then
+				print("found clicked holder")
+				clickedHolder = holder
+				break
+			end
+		end
+		if clickedHolder then
+			print("Total cards in holder is ", #clickedHolder.cards)
+			local card = clickedHolder.cards[#clickedHolder.cards]
+			print("Card is ", card.rank, card.suit)
+			if card then
+				self:checkAceSlots(card)
+			end
+		end
+	end
+end
+
+function HolderLocations:handleClick(x, y)
+	print("x: " .. x .. " y: " .. y)
+	---@type Card | nil
+	local clickedCard = nil
+	for i, card in ipairs(ActiveCards) do
+		local bounds = card:getBoundingBox()
+		local isInBox = card:isInBox(x, y, bounds.maxY)
+		if isInBox then
+			clickedCard = card
+			print("card clicked: " .. clickedCard.rank .. " " .. clickedCard.suit)
+			break
+		end
+	end
+	if clickedCard == nil then
+		return
+	end
+
+	local holderType = clickedCard.parentHolder.type
+	print(clickedCard.parentHolder.type)
+	if holderType == HolderType.DRAW then
+		local lastCard = clickedCard.parentHolder.cards[#clickedCard.parentHolder.cards]
+		if not lastCard.isDisplayed then
+			self:drawCard()
+			return
+		else
+		end
+	end
+end
+
 function HolderLocations:mousepressed(x, y)
 	local holderType = self:getHolderType(x, y)
 	if holderType == nil then
@@ -142,7 +228,7 @@ function HolderLocations:mousepressed(x, y)
 			return
 		elseif #self.drawnPile.cards > 0 then
 			local topDrawnCard = self.drawnPile.cards[#self.drawnPile.cards]
-			topDrawnCard:mousepressed(x, y)
+			topDrawnCard:setMoving(x, y)
 			if topDrawnCard.isMoving == true then
 				State:setMoving(self.drawnPile, topDrawnCard)
 				return
