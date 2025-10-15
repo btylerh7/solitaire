@@ -24,8 +24,8 @@ function Holder:new(x, y, type)
 	local holder = setmetatable({}, self)
 	holder.x = x
 	holder.y = y
-	holder.width = G.cardWidth
-	holder.height = G.cardHeight
+	holder.width = G.cardWidth / 2
+	holder.height = G.cardHeight / 2
 	holder.cards = {}
 	holder.type = type
 
@@ -65,6 +65,7 @@ function Holder:checkShouldReveal()
 
 	if hasCards and isGameHolder and not lastCard.isDisplayed then
 		lastCard.isDisplayed = true
+		lastCard:setQuad()
 		lastCard.isDragable = true
 	end
 end
@@ -132,7 +133,7 @@ end
 function Holder:isInHolder(mouseX, mouseY)
 	local lowest = self:getLowestY()
 	local minX = self.x
-	local maxX = self.x + (self.width * G.zoomMultiplier)
+	local maxX = self.x + ((self.width * 2) * G.zoomMultiplier)
 
 	local isInX = mouseX > minX and mouseX < maxX
 	local isInY = mouseY > lowest.lastCardY and mouseY < lowest.lowestY

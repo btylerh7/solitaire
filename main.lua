@@ -8,9 +8,11 @@ require("all-cards")
 require("state")
 
 G = {}
-G.cardWidth = 48
-G.cardHeight = 64
-G.zoomMultiplier = 2
+G.cardWidth = 48 * 2
+G.cardHeight = 64 * 2
+G.zoomMultiplier = 1
+G.shaders = {}
+G.shaders.outline = love.graphics.newShader("shaders/outline.glsl")
 State = State:new()
 
 function love.load()

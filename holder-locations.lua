@@ -53,6 +53,7 @@ function HolderLocations:addShuffledCards(cards)
 			self.cardSlots[i]:addCard(nextCard)
 		end
 		self.cardSlots[i].cards[i].isDisplayed = true
+		self.cardSlots[i].cards[i]:setQuad()
 		self.cardSlots[i].cards[i].isDragable = true
 		self.cardSlots[i]:setCardLocation()
 	end

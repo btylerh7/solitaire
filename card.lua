@@ -22,8 +22,10 @@ function Card.new(rank, suit, isDisplayed)
 	card.isDragable = false
 	card.isMoving = false
 	card.isInStack = false
-	card.sprite = love.graphics.newImage("assets/1.2 Poker cards.png")
+	-- card.sprite = love.graphics.newImage("assets/1.2 Poker cards.png")
+	card.sprite = love.graphics.newImage("cards/cards-v2.png")
 	card.parentHolder = nil
+	card:setQuad()
 	return card
 end
 
@@ -66,9 +68,12 @@ function Card:updateAll(dt)
 end
 
 function Card:draw()
-	self:setQuad()
+	-- love.graphics.setShader(G.shaders.outline)
+	-- G.shaders.outline:send("outline_color", { 0, 0, 0, 1 })
+	-- G.shaders.outline:send("border_thickness", 0.01)
 	love.graphics.setBlendMode("alpha", "alphamultiply")
 	love.graphics.draw(self.sprite, self.quad, self.x, self.y, nil, G.zoomMultiplier, G.zoomMultiplier)
+	-- love.graphics.setShader()
 end
 
 ---@param x number
