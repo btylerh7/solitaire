@@ -6,6 +6,7 @@ require("holder-draw")
 require("holder-locations")
 require("all-cards")
 require("state")
+require("events")
 
 G = {}
 G.cardWidth = 48 * 2
@@ -36,15 +37,16 @@ end
 
 function love.mousepressed(x, y, button, isTouch, presses)
 	if button == 1 then
-		States.gameState.clicked = true
-		State.pressed = true
-		if presses == 2 then
-			State.doubleClick = true
-			HolderLocations:doubleClicked(x, y)
-		else
-			-- HolderLocations:handleClick(x, y)
-			HolderLocations:mousepressed(x, y)
-		end
+		Events:clicked(x, y)
+		-- States.gameState.clicked = true
+		-- State.pressed = true
+		-- if presses == 2 then
+		-- 	State.doubleClick = true
+		-- 	HolderLocations:doubleClicked(x, y)
+		-- else
+		-- 	-- HolderLocations:handleClick(x, y)
+		-- 	HolderLocations:mousepressed(x, y)
+		-- end
 	end
 end
 function love.mousemoved(x, y)

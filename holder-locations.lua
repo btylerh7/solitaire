@@ -62,7 +62,7 @@ function HolderLocations:addShuffledCards(cards)
 		card.isDisplayed = false
 		self.drawPile:addCard(table.remove(cards, #cards))
 	end
-	ActiveCards = allCards
+	States.gameState.activeCards = allCards
 end
 
 function HolderLocations:setDisplayed() end
