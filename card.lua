@@ -24,6 +24,7 @@ function Card.new(rank, suit, isDisplayed)
 	card.isInStack = false
 	-- card.sprite = love.graphics.newImage("assets/1.2 Poker cards.png")
 	card.sprite = love.graphics.newImage("cards/cards-v2.png")
+	---@type Holder | nil
 	card.parentHolder = nil
 	card:setQuad()
 	return card

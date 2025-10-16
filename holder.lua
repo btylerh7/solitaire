@@ -117,6 +117,16 @@ function Holder:draw()
 	end
 end
 
+---@param card Card
+function Holder:getIndexOfCard(card)
+	for index, cardToCheck in ipairs(self.cards) do
+		if card == cardToCheck then
+			return index
+		end
+	end
+	return nil
+end
+
 function Holder:getLowestY()
 	if #self.cards == 0 then
 		return { lowestY = self.y + self.height, lastCardY = self.y }
