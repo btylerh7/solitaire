@@ -52,8 +52,7 @@ function HolderLocations:addShuffledCards(cards)
 			table.insert(allCards, nextCard)
 			self.cardSlots[i]:addCard(nextCard)
 		end
-		self.cardSlots[i].cards[i].isDisplayed = true
-		self.cardSlots[i].cards[i]:setQuad()
+		self.cardSlots[i].cards[i]:toggleDisplayed()
 		self.cardSlots[i].cards[i].isDragable = true
 		self.cardSlots[i]:setCardLocation()
 	end
@@ -101,7 +100,7 @@ end
 function HolderLocations:drawCard()
 	if #self.drawPile.cards > 0 then
 		local nextCard = self.drawPile.cards[#self.drawPile.cards]
-		nextCard.isDisplayed = true
+		nextCard:toggleDisplayed()
 		nextCard.isDragable = true
 		self.drawnPile:addCard(nextCard)
 		self.drawPile:removeCard(#self.drawPile.cards)
@@ -112,7 +111,8 @@ function HolderLocations:drawCard()
 		while #self.drawnPile.cards > 0 do
 			local currentCard = self.drawnPile.cards[#self.drawnPile.cards]
 			currentCard.isDragable = false
-			currentCard.isDisplayed = false
+			-- currentCard.isDisplayed = false
+			currentCard:toggleDisplayed()
 			self.drawPile:addCard(currentCard)
 			self.drawnPile:removeCard(#self.drawnPile.cards)
 		end

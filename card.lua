@@ -70,7 +70,7 @@ end
 function Card:draw()
 	-- love.graphics.setShader(G.shaders.outline)
 	-- G.shaders.outline:send("outline_color", { 0, 0, 0, 1 })
-	-- G.shaders.outline:send("border_thickness", 0.01)
+	-- G.shaders.outline:send("border_thickness", 0.007)
 	love.graphics.setBlendMode("alpha", "alphamultiply")
 	love.graphics.draw(self.sprite, self.quad, self.x, self.y, nil, G.zoomMultiplier, G.zoomMultiplier)
 	-- love.graphics.setShader()
@@ -110,4 +110,13 @@ function Card:mousereleased(mouseX, mouseY)
 		self.y = self.startY
 	end
 	self.isMoving = false
+end
+
+function Card:toggleDisplayed()
+	if self.isDisplayed then
+		self.isDisplayed = false
+	else
+		self.isDisplayed = true
+	end
+	self:setQuad()
 end

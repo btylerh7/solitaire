@@ -64,8 +64,7 @@ function Holder:checkShouldReveal()
 	local lastCard = self:lastCard()
 
 	if hasCards and isGameHolder and not lastCard.isDisplayed then
-		lastCard.isDisplayed = true
-		lastCard:setQuad()
+		lastCard:toggleDisplayed()
 		lastCard.isDragable = true
 	end
 end

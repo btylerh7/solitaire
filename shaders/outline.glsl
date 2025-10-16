@@ -13,10 +13,10 @@ vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords)
     number top = texture_coords.y;
     number bottom = 1.0 - texture_coords.y;
 
-    number edge = step(left, border_thickness)
-	+ step(right, border_thickness)
-	+ step(top, border_thickness)
-	+ step(bottom, border_thickness);
+    number edge = step(left, border_thickness);
+	// + step(right, border_thickness)
+	// + step(top, border_thickness)
+	// + step(bottom, border_thickness);
 
     if (edge > 0.0) {
 	return outline_color;
