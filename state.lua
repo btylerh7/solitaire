@@ -13,10 +13,8 @@ CurrentlyMoving.__index = CurrentlyMoving
 ---@field currentlyMoving CurrentlyMoving
 ---@field pressed boolean
 ---@field lastClick number - number of clicks within interval
----@field clickInterval number - number of seconds between clicks
 ---@field isMoving boolean
 ---@field remainingRedraws number - number of times the draw pile can be reset
----@field doubleClick boolean
 State = {}
 State.__index = State
 
@@ -28,8 +26,6 @@ end
 function State:setup()
 	self.pressed = false
 	self.isMoving = false
-	self.clickInterval = 0.2
-	self.lastClick = 0
 	self.currentlyMoving = {
 		holder = nil,
 		targetHolder = nil,

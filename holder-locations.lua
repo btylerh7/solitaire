@@ -255,10 +255,6 @@ function HolderLocations:mousepressed(x, y)
 			end
 		end
 	end
-
-	-- Check if card in drawn pile clicked
-	if holderType == HolderType.DRAW then
-	end
 end
 function HolderLocations:move(x, y)
 	for _, holder in pairs(self.cardSlots) do

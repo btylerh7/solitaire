@@ -13,13 +13,14 @@ G.cardHeight = 64 * 2
 G.zoomMultiplier = 1
 G.shaders = {}
 G.shaders.outline = love.graphics.newShader("shaders/outline.glsl")
+States = require("state-machine")
 State = State:new()
+States.gameState:new()
 
 function love.load()
 	HolderLocations:setup()
-	AllCards:loadCards()
-	AllCards:shuffle()
-	HolderLocations:addShuffledCards(ActiveCards)
+	AllCards:setup()
+	HolderLocations:addShuffledCards(States.gameState.activeCards)
 end
 
 function love.update(dt)
@@ -29,11 +30,13 @@ end
 function love.draw()
 	love.graphics.setBackgroundColor(0.21, 0.42, 0.16)
 	HolderLocations:drawAll()
-	State:draw()
+	States.gameState:draw()
+	-- State:draw()
 end
 
 function love.mousepressed(x, y, button, isTouch, presses)
 	if button == 1 then
+		States.gameState.clicked = true
 		State.pressed = true
 		if presses == 2 then
 			State.doubleClick = true

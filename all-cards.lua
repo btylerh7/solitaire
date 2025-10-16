@@ -3,6 +3,11 @@ AllCards = {}
 ---@type Card[]
 ActiveCards = {}
 
+function AllCards:setup()
+	AllCards:loadCards()
+	AllCards:shuffle()
+end
+
 function AllCards:loadCards()
 	for i = 1, 13, 1 do
 		table.insert(AllCards, Card.new(i, 1, false))
@@ -12,11 +17,11 @@ function AllCards:loadCards()
 	end
 end
 function AllCards:shuffle()
-	ActiveCards = {}
+	States.gameState.activeCards = {}
 	math.randomseed(os.time())
 	while #AllCards > 0 do
 		local randomIndex = math.random(1, #AllCards)
-		table.insert(ActiveCards, AllCards[randomIndex])
+		table.insert(States.gameState.activeCards, AllCards[randomIndex])
 		table.remove(AllCards, randomIndex)
 	end
 end
