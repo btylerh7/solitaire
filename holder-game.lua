@@ -3,16 +3,15 @@
 ---@field lowestSuit number | nil
 GameHolder = Holder:extend()
 
-function GameHolder:setCardLocation()
+---Sets the positions of each card in holder based on the holder's position
+---This is how the game holders stack
+function GameHolder:setPositions()
 	local yStep = G.gameHolderYStep
 	if #self.cards == 0 then
 		self.lowestSuit = nil
 		self.lowestRank = nil
 	end
 	for index, card in ipairs(self.cards) do
-		if card.isMoving then
-			break
-		end
 		local currentYStep = (index - 1) * yStep
 		card.x = self.x
 		card.y = self.y + currentYStep
@@ -25,6 +24,8 @@ function GameHolder:setCardLocation()
 		end
 	end
 end
+
+---Used when a card is dropped over a holder to see if it can be added
 function GameHolder:checkCanAdd(rank, suit)
 	-- Kings can be inserted if holder is empty
 	if #self.cards == 0 and rank == 13 then

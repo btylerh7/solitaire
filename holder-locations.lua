@@ -126,26 +126,29 @@ end
 
 ---Used when draw pile is clicked to reveal extra card
 function HolderLocations:drawCard()
-	-- TODO not working
 	if #self.drawPile.cards > 0 then
-		local nextCard = self.drawPile.cards[#self.drawPile.cards]
-		nextCard.isDisplayed = true
-		nextCard.isDragable = true
-		self.drawnPile:addCard(nextCard)
+		--Draw card normally
+		local drawPile = self.drawPile.cards
+		local nextCard = drawPile[#drawPile]
 		self.drawPile:removeCard(nextCard)
-	end
-	if #self.drawPile == 0 and States.gameState.remainingRedraws > 0 then
+		nextCard.isDisplayed = true
+		nextCard:setQuad()
+		self.drawnPile:addCard(nextCard)
+	elseif States.gameState.remainingRedraws > 0 then
+		--Reset draw pile
 		print("time to reset")
 		while #self.drawnPile.cards > 0 do
 			local currentCard = self.drawnPile.cards[#self.drawnPile.cards]
-			currentCard.isDragable = false
 			currentCard.isDisplayed = false
+			currentCard:setQuad()
 			self.drawPile:addCard(currentCard)
 			self.drawnPile:removeCard(currentCard)
 		end
 		States.gameState.remainingRedraws = States.gameState.remainingRedraws - 1
+	else
+		--No more drawing, do nothing
+		return
 	end
-	self.drawnPile:checkIsDisplayed()
 end
 
 function HolderLocations:getHolderType(x, y)
@@ -180,128 +183,4 @@ function HolderLocations:checkAceSlots(card)
 	end
 	self.doubleClick = false
 	return
-end
-
-function HolderLocations:doubleClicked(x, y)
-	print("checking double click")
-	local holderType = self:getHolderType(x, y)
-	if holderType == HolderType.ACE then
-		return
-	end
-	print("Holder type is ", holderType)
-
-	if holderType == HolderType.DRAW then
-		local isClicked = self.drawnPile:checkIsClicked(x, y)
-	end
-	if holderType == HolderType.GAME then
-		---@type GameHolder | nil
-		local clickedHolder = nil
-		for _, holder in ipairs(self.cardSlots) do
-			if holder:checkIsClicked(x, y) then
-				print("found clicked holder")
-				clickedHolder = holder
-				break
-			end
-		end
-		if clickedHolder then
-			print("Total cards in holder is ", #clickedHolder.cards)
-			local card = clickedHolder.cards[#clickedHolder.cards]
-			print("Card is ", card.rank, card.suit)
-			if card then
-				self:checkAceSlots(card)
-			end
-		end
-	end
-end
-
-function HolderLocations:handleClick(x, y)
-	print("x: " .. x .. " y: " .. y)
-	---@type Card | nil
-	local clickedCard = nil
-	for i, card in ipairs(ActiveCards) do
-		local bounds = card:getBoundingBox()
-		local isInBox = card:isInBox(x, y, bounds.maxY)
-		if isInBox then
-			clickedCard = card
-			print("card clicked: " .. clickedCard.rank .. " " .. clickedCard.suit)
-			break
-		end
-	end
-	if clickedCard == nil then
-		return
-	end
-
-	local holderType = clickedCard.parentHolder.type
-	print(clickedCard.parentHolder.type)
-	if holderType == HolderType.DRAW then
-		local lastCard = clickedCard.parentHolder.cards[#clickedCard.parentHolder.cards]
-		if not lastCard.isDisplayed then
-			self:drawCard()
-			return
-		else
-		end
-	end
-end
-
-function HolderLocations:mousepressed(x, y)
-	local holderType = self:getHolderType(x, y)
-	if holderType == nil then
-		return
-	end
-
-	-- Check if draw pile clicked
-	if holderType == HolderType.DRAW then
-		if self.drawPile:isInHolder(x, y) == true then
-			self:drawCard()
-			return
-		elseif #self.drawnPile.cards > 0 then
-			local topDrawnCard = self.drawnPile.cards[#self.drawnPile.cards]
-			topDrawnCard:setMoving(x, y)
-			if topDrawnCard.isMoving == true then
-				State:setMoving(self.drawnPile, topDrawnCard)
-				return
-			end
-			for _, card in ipairs(self.drawnPile.cards) do
-				if card.isDragable then
-					if card:isInBox(x, y) then
-						card:setMoving(x, y, 20)
-					else
-						card:setMoving(x, y)
-					end
-				end
-			end
-		end
-	end
-
-	-- Check if game holder card clicked
-	if holderType == HolderType.GAME then
-		for _, holder in pairs(self.cardSlots) do
-			local result = holder:checkIsClicked(x, y)
-			if result == true then
-				break
-			end
-		end
-	end
-end
-function HolderLocations:move(x, y)
-	for _, holder in pairs(self.cardSlots) do
-		for _, card in ipairs(holder.cards) do
-			if card.isMoving == true then
-				card:move(x, y)
-			end
-		end
-	end
-end
-
-function HolderLocations:mousereleased(x, y)
-	for index, holder in pairs(self.cardSlots) do
-		if #State.currentlyMoving.cards > 0 then
-			State.currentlyMoving.cards[1]:mousereleased(x, y, holder)
-		end
-		for index, card in ipairs(holder.cards) do
-			if card.isMoving == true then
-				card:mousereleased(x, y, holder)
-			end
-		end
-	end
 end

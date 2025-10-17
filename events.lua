@@ -32,11 +32,8 @@ function Events:clicked(mouseX, mouseY)
 				table.insert(States.gameState.movingCards.cards, holder.cards[foundIndex])
 				holder:removeCard(holder.cards[foundIndex])
 			end
-			forEach(States.gameState.movingCards.cards, function(card)
-				card.isMoving = true
-				card.isMoving = true
-				card.isClicked = true
-			end)
+			-- TODO ?
+			forEach(States.gameState.movingCards.cards, function(card) end)
 		end
 	end
 end
@@ -63,10 +60,8 @@ function Events:mouseReleased(mouseX, mouseY)
 		forEach(States.gameState.movingCards.cards, function(card)
 			print("adding to holder")
 			holder:addCard(card)
-			card.isMoving = false
-			card.isClicked = false
 			holder:setPositions()
-			holder:checkIsDisplayed()
+			holder:displayLastCard()
 		end)
 	end
 	local targetHolder = HolderLocations:findHolder(mouseX, mouseY)
@@ -81,6 +76,7 @@ function Events:mouseReleased(mouseX, mouseY)
 	if firstCard and targetHolder:checkCanAdd(firstCard.rank, firstCard.suit) then
 		print("sending to target")
 		sendToHolder(targetHolder)
+		startingHolder:displayLastCard()
 	else
 		print("sending back, can't add")
 		sendToHolder(startingHolder)

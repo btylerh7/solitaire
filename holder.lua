@@ -36,6 +36,8 @@ function Holder:new(x, y, type)
 	return holder
 end
 
+---Sets the positions of each card in holder based on the holder's position
+---This is how the game holders stack
 function Holder:setPositions()
 	for index, card in ipairs(self.cards) do
 		if self.type == HolderType.GAME then
@@ -50,9 +52,11 @@ function Holder:setPositions()
 	end
 end
 
-function Holder:checkIsDisplayed()
-	for index, card in ipairs(self.cards) do
-		card.isDisplayed = index == #self.cards
+function Holder:displayLastCard()
+	local card = self.cards[#self.cards]
+	if card then
+		card.isDisplayed = true
+		card:setQuad()
 	end
 end
 
@@ -65,7 +69,6 @@ function Holder:addCard(card)
 	table.insert(self.cards, card)
 	card.parent = self
 	self:setPositions()
-	self:debugPrint()
 end
 
 ---@param card Card
@@ -78,7 +81,6 @@ function Holder:removeCard(card)
 		self.cards[index].parent = nil
 		table.remove(self.cards, index)
 		self:setPositions()
-		self:debugPrint()
 	else
 		error("Card not found in holder?")
 	end
@@ -130,7 +132,9 @@ end
 
 function Holder:draw()
 	if #self.cards == 0 then
+		love.graphics.setColor(0.21, 0.30, 0.16)
 		love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
+		love.graphics.setColor(1, 1, 1)
 	else
 		for index, card in ipairs(self.cards) do
 			card:draw()

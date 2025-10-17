@@ -13,8 +13,6 @@ CardParent = {
 ---@field width number
 ---@field height number
 ---@field isDisplayed boolean
----@field isMoving boolean
----@field isClicked boolean
 ---@field isInStack boolean
 ---@field parentType string: One of CardParent
 ---@field parent Holder | nil
@@ -38,8 +36,6 @@ function Card.new(rank, suit, isDisplayed)
 	card.width = G.cardWidth
 	card.height = G.cardHeight
 	card.isDisplayed = isDisplayed
-	card.isMoving = false
-	card.isClicked = false
 	card:setQuad()
 	return card
 end
@@ -84,7 +80,6 @@ function Card:debugPrint()
 	print("Card debug print")
 	print("Card rank: " .. self.rank)
 	print("Card suit: " .. self.suit)
-	print("Card is moving: ", self.isMoving)
 	print("Card is displayed: ", self.isDisplayed)
 	print("-----------")
 end

@@ -10,13 +10,15 @@ function AceHolder:checkCanAdd(rank, suit)
 	return false
 end
 function AceHolder:addCard(card)
-	card.isMoving = false
-	card.parentHolder = self
-	card.isDragable = false
+	print(card.isDisplayed)
+	if self.cards == nil then
+		self.cards = {}
+	end
 	if self.suit == nil then
 		self.suit = card.suit
 	end
 	self.rank = card.rank
 	table.insert(self.cards, card)
-	self:setCardLocation()
+	card.parent = self
+	self:setPositions()
 end
