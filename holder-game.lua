@@ -4,12 +4,15 @@
 GameHolder = Holder:extend()
 
 function GameHolder:setCardLocation()
-	local yStep = 20
+	local yStep = G.gameHolderYStep
 	if #self.cards == 0 then
 		self.lowestSuit = nil
 		self.lowestRank = nil
 	end
 	for index, card in ipairs(self.cards) do
+		if card.isMoving then
+			break
+		end
 		local currentYStep = (index - 1) * yStep
 		card.x = self.x
 		card.y = self.y + currentYStep

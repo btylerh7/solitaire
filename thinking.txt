@@ -1,0 +1,36 @@
+# Card
+    - moving
+    - game holder
+    - ace holder
+    - draw pile
+    - drawn pile
+
+# Holder
+    ## Types
+        - ace (4)
+        - draw (1)
+        - drawn (1)
+        - game (7)
+    ## Properties
+        - next rank
+        - next suit
+        - cards
+
+
+# Game Actions
+    ## User
+        - double click a card
+        - click and drag a card
+        - click draw pile
+    ## Game Events
+        - reveal flipped card
+        - restart draw pile
+        - draw card from draw pile
+        - shuffle cards
+        - add to holders
+
+
+
+
+
+

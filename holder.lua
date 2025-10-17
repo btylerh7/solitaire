@@ -14,6 +14,8 @@ HolderType = {
 --- @field cards Card[]
 --- @field rank number | nil -- for ace type
 --- @field suit number | nil -- for ace type
+--- @field nextRank number
+--- @field nextSuit number[]
 Holder = Base:extend()
 
 ---@param x number
@@ -24,128 +26,70 @@ function Holder:new(x, y, type)
 	local holder = setmetatable({}, self)
 	holder.x = x
 	holder.y = y
-	holder.width = G.cardWidth / 2
-	holder.height = G.cardHeight / 2
+	holder.width = G.cardWidth
+	holder.height = G.cardHeight
 	holder.cards = {}
 	holder.type = type
-
+	holder.nextRank = nil
+	holder.nextSuit = {}
 	return holder
 end
 
-function Holder:setCardLocation()
-	for _, card in ipairs(self.cards) do
-		card.x = self.x
-		card.y = self.y
+function Holder:setPositions()
+	for index, card in ipairs(self.cards) do
+		if self.type == HolderType.GAME then
+			if card.isMoving then
+				break
+			end
+			card.x = self.x
+			card.y = self.y + (G.gameHolderYStep * (index - 1))
+			card.isDisplayed = index == #self.cards
+			card.isInStack = index ~= #self.cards
+			card:setQuad()
+		else
+			card.x = self.x
+			card.y = self.y
+		end
 	end
 end
 
 ---@param card Card
 function Holder:addCard(card)
-	card.isMoving = false
-	card.parentHolder = self
+	if self.cards == nil then
+		self.cards = {}
+	end
 	table.insert(self.cards, card)
-	if self.type == HolderType.GAME then
-		card.y = (#self.cards * 20) + self.y
-		card.x = self.x
-	end
-	self:setCardLocation()
+	card.parent = self
+	self:setPositions()
 end
 
-function Holder:hasCards()
-	return #self.cards > 0
-end
-function Holder:lastCard()
-	return self.cards[#self.cards]
-end
-
-function Holder:checkShouldReveal()
-	local hasCards = self:hasCards()
-	local isGameHolder = self.type == HolderType.GAME
-	local lastCard = self:lastCard()
-
-	if hasCards and isGameHolder and not lastCard.isDisplayed then
-		lastCard:toggleDisplayed()
-		lastCard.isDragable = true
-	end
-end
-
-function Holder:checkIsClicked(mouseX, mouseY)
-	for _, card in ipairs(self.cards) do
-		if card.isDragable == true then
-			if card.isInStack == true then
-				card:setMoving(mouseX, mouseY)
-			else
-				card:setMoving(mouseX, mouseY)
-			end
-
-			if card.isMoving == true then
-				State:setMoving(self, card)
-				return true
-			end
-		end
-	end
-	return false
-end
-
----@param index number - index of card to be removed
+---@param card Card
 function Holder:removeCard(index)
-	local startingTotal = #self.cards
+	self.cards[index].parent = nil
 	table.remove(self.cards, index)
-	if #self.cards == startingTotal then
-		print("error, card not removed properly")
-	end
-	if #self.cards == 0 then
-		return
-	end
+	self:setPositions()
 end
 
-function Holder:load() end
-function Holder:update(dt)
-	for key, value in ipairs(self.cards) do
-		value:update(dt)
-	end
-end
-
-function Holder:draw()
-	if not next(self.cards) then
-		love.graphics.setColor(0.21, 0.30, 0.16)
-		love.graphics.rectangle("fill", self.x, self.y, self.width * 2, self.height * 2)
-		love.graphics.setColor(1, 1, 1)
-	end
-	for index, card in ipairs(self.cards) do
-		card:draw()
-	end
+function Holder:checkCanAdd(rank, suit)
+	return false
 end
 
 ---@param card Card
 function Holder:getIndexOfCard(card)
 	for index, cardToCheck in ipairs(self.cards) do
-		if card == cardToCheck then
+		if card.rank == cardToCheck.rank and card.suit == cardToCheck.suit then
 			return index
 		end
 	end
 	return nil
 end
 
-function Holder:getLowestY()
+function Holder:draw()
 	if #self.cards == 0 then
-		return { lowestY = self.y + self.height, lastCardY = self.y }
+		love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
+	else
+		for index, card in ipairs(self.cards) do
+			card:draw()
+		end
 	end
-	local lastCard = self.cards[#self.cards]
-	local lowestY = lastCard.y + lastCard.height
-	return { lowestY = lowestY, lastCardY = lastCard.y }
-end
-
----@param mouseX number
----@param mouseY number
----@return boolean
-function Holder:isInHolder(mouseX, mouseY)
-	local lowest = self:getLowestY()
-	local minX = self.x
-	local maxX = self.x + ((self.width * 2) * G.zoomMultiplier)
-
-	local isInX = mouseX > minX and mouseX < maxX
-	local isInY = mouseY > lowest.lastCardY and mouseY < lowest.lowestY
-
-	return isInX == true and isInY == true
 end

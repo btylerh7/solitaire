@@ -4,57 +4,40 @@ require("holder-game")
 require("holder-ace")
 require("holder-draw")
 require("holder-locations")
-require("all-cards")
-require("state")
 require("events")
+require("moving-cards")
 
-G = {}
-G.cardWidth = 48 * 2
-G.cardHeight = 64 * 2
-G.zoomMultiplier = 1
-G.shaders = {}
-G.shaders.outline = love.graphics.newShader("shaders/outline.glsl")
-States = require("state-machine")
-State = State:new()
+G = require("globals")
+States = require("state")
 States.gameState:new()
 
 function love.load()
 	HolderLocations:setup()
-	AllCards:setup()
-	HolderLocations:addShuffledCards(States.gameState.activeCards)
+	HolderLocations:addShuffledCards()
 end
 
 function love.update(dt)
-	HolderLocations:updateAll(dt)
+	if States.gameState.moving then
+		local x = love.mouse.getX()
+		local y = love.mouse.getY()
+		for index, card in ipairs(States.gameState.movingCards.cards) do
+			card.x = x
+			card.y = ((index - 1) * G.gameHolderYStep) + y
+		end
+	end
 end
 
 function love.draw()
 	love.graphics.setBackgroundColor(0.21, 0.42, 0.16)
 	HolderLocations:drawAll()
 	States.gameState:draw()
-	-- State:draw()
 end
 
-function love.mousepressed(x, y, button, isTouch, presses)
+function love.mousepressed(x, y, button)
 	if button == 1 then
 		Events:clicked(x, y)
-		-- States.gameState.clicked = true
-		-- State.pressed = true
-		-- if presses == 2 then
-		-- 	State.doubleClick = true
-		-- 	HolderLocations:doubleClicked(x, y)
-		-- else
-		-- 	-- HolderLocations:handleClick(x, y)
-		-- 	HolderLocations:mousepressed(x, y)
-		-- end
 	end
 end
 function love.mousemoved(x, y)
-	State:moveCard(x, y)
-end
-function love.mousereleased(x, y, button)
-	if button == 1 then
-		State.pressed = false
-		State:mousereleased(x, y)
-	end
+	Events:cardMoving(x, y)
 end

@@ -6,9 +6,6 @@ LocationConfig = {
 	leftSideX = 50,
 	aceAreaX = love.graphics.getWidth() / 2,
 }
-function steppedX(startingValue, index)
-	return startingValue + (LocationConfig.stepCount * (index - 1))
-end
 
 ---@class HolderLocations
 ---@field cardSlots GameHolder[]
@@ -16,6 +13,9 @@ end
 HolderLocations = {}
 
 function HolderLocations:setup()
+	local steppedX = function(startingValue, index)
+		return startingValue + (LocationConfig.stepCount * (index - 1))
+	end
 	local startX = LocationConfig.leftSideX
 	local startY = LocationConfig.topRowY
 	HolderLocations.drawPile = DrawHolder:new(steppedX(startX, 1), startY, "draw")
@@ -43,29 +43,37 @@ function HolderLocations:setup()
 	table.insert(HolderLocations.cardSlots, GameHolder:new(steppedX(startX, 7), startY, "game"))
 end
 
----@param cards Card[]
-function HolderLocations:addShuffledCards(cards)
-	local allCards = {}
+--- Uses States.gameState.activeCards to place cards in correct spots
+function HolderLocations:addShuffledCards()
+	local cardsIndex = 1
+	local lastCardIndex = #States.gameState.activeCards
+	-- Once for each game holder
 	for i = 1, 7, 1 do
-		for _ = 1, i, 1 do
-			local nextCard = table.remove(cards, #cards)
-			table.insert(allCards, nextCard)
-			self.cardSlots[i]:addCard(nextCard)
+		for j = 1, i, 1 do
+			local card = States.gameState.activeCards[cardsIndex]
+			local currentHolder = self.cardSlots[i]
+			card.parent = currentHolder
+			card.isInStack = j ~= i
+
+			--If card is last in holder, display it
+			card.isDisplayed = j == i
+			card:setQuad()
+			currentHolder:addCard(card)
+			cardsIndex = cardsIndex + 1
 		end
-		self.cardSlots[i].cards[i]:toggleDisplayed()
-		self.cardSlots[i].cards[i].isDragable = true
-		self.cardSlots[i]:setCardLocation()
 	end
+	-- Add rest to draw pile
+	for i = cardsIndex, lastCardIndex, 1 do
+		local card = States.gameState.activeCards[i]
+		local currentHolder = self.drawPile
 
-	while #cards > 0 do
-		local card = cards[#cards]
+		card.parent = currentHolder
 		card.isDisplayed = false
-		self.drawPile:addCard(table.remove(cards, #cards))
-	end
-	States.gameState.activeCards = allCards
-end
+		card.isInStack = false
 
-function HolderLocations:setDisplayed() end
+		currentHolder:addCard(card)
+	end
+end
 
 --- @param card Card
 --- @param slot string
