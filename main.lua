@@ -32,9 +32,14 @@ function love.draw()
 	States.gameState:draw()
 end
 
-function love.mousepressed(x, y, button)
+function love.mousepressed(x, y, button, _, presses)
 	if button == 1 then
-		Events:clicked(x, y)
+		if presses == 1 then
+			Events:clicked(x, y)
+		end
+		if presses == 2 then
+			Events:doubleClicked(x, y)
+		end
 	end
 end
 function love.mousereleased(x, y, button)

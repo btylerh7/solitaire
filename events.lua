@@ -2,6 +2,46 @@ require("functions.functional-programming")
 
 Events = {}
 
+function Events:doubleClicked(mouseX, mouseY)
+	print("-----")
+	print("-----")
+	print("checking double click")
+	local isDrawPile = HolderLocations.drawPile:checkInHolder(mouseX, mouseY)
+	print("isDrawPile: ", isDrawPile)
+	local isAce = filter(HolderLocations.aceSlots, function(holder)
+		return holder:checkInHolder(mouseX, mouseY)
+	end)
+	print("isAce: ", isAce)
+	local foundCard = find(States.gameState.activeCards, function(card)
+		local isClicked = card:checkIsClicked(mouseX, mouseY)
+		local isDisplayed = card.isDisplayed
+		local hasParent = card.parent ~= nil
+
+		return isClicked and isDisplayed and hasParent
+	end)
+	if not isDrawPile and #isAce == 0 then
+		print("not draw or ace")
+		if foundCard then
+			print("found card")
+			local availableAceSlots = filter(HolderLocations.aceSlots, function(holder)
+				return holder:checkCanAdd(foundCard.rank, foundCard.suit)
+			end)
+			if #availableAceSlots > 0 then
+				local holder = availableAceSlots[1]
+				local parent = foundCard.parent
+				foundCard.parent:removeCard(foundCard)
+				if parent then
+					parent:displayLastCard()
+				end
+				holder:addCard(foundCard)
+				holder:setPositions()
+				holder:displayLastCard()
+			end
+		end
+	end
+	print("-----")
+	print("-----")
+end
 function Events:clicked(mouseX, mouseY)
 	print("Checking click at " .. mouseX .. " " .. mouseY)
 	local isDrawPile = HolderLocations.drawPile:checkInHolder(mouseX, mouseY)
