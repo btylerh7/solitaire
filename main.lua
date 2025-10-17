@@ -5,7 +5,6 @@ require("holder-ace")
 require("holder-draw")
 require("holder-locations")
 require("events")
-require("moving-cards")
 
 G = require("globals")
 States = require("state")
@@ -38,6 +37,6 @@ function love.mousepressed(x, y, button)
 		Events:clicked(x, y)
 	end
 end
-function love.mousemoved(x, y)
-	Events:cardMoving(x, y)
+function love.mousereleased(x, y, button)
+	Events:mouseReleased(x, y)
 end

@@ -11,7 +11,7 @@ States.gameLocation = {
 ---@field activeCards Card[]
 ---@field clicked boolean
 ---@field moving boolean: Whether the user is moving cards at the moment
----@field movingCards {cards: {}, targetHolder?: Holder, startingHolder?: Holder}
+---@field movingCards {cards: Card[], targetHolder?: Holder, startingHolder?: Holder}
 ---@field draw fun(self)
 ---@field remainingRedraws number
 ---@field isWin boolean

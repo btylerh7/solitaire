@@ -48,15 +48,15 @@ function HolderLocations:addShuffledCards()
 	local cardsIndex = 1
 	local lastCardIndex = #States.gameState.activeCards
 	-- Once for each game holder
-	for i = 1, 7, 1 do
-		for j = 1, i, 1 do
+	for row = 1, 7, 1 do
+		for column = 1, row, 1 do
 			local card = States.gameState.activeCards[cardsIndex]
-			local currentHolder = self.cardSlots[i]
+			local currentHolder = self.cardSlots[row]
 			card.parent = currentHolder
-			card.isInStack = j ~= i
+			card.isInStack = column ~= row
 
 			--If card is last in holder, display it
-			card.isDisplayed = j == i
+			card.isDisplayed = column == row
 			card:setQuad()
 			currentHolder:addCard(card)
 			cardsIndex = cardsIndex + 1
@@ -102,6 +102,26 @@ function HolderLocations:drawAll()
 	for index, value in ipairs(self.aceSlots) do
 		value:draw()
 	end
+end
+
+---Used to determine if a point is inside any of the game's holders
+---@param x number
+---@param y number
+---@return Holder|nil
+function HolderLocations:findHolder(x, y)
+	for _, holder in ipairs(self.cardSlots) do
+		if holder:checkInHolder(x, y) then
+			print("in holder, game")
+			return holder
+		end
+	end
+	for _, holder in ipairs(self.aceSlots) do
+		if holder:checkInHolder(x, y) then
+			print("in holder, ace")
+			return holder
+		end
+	end
+	return nil
 end
 
 ---Used when draw pile is clicked to reveal extra card

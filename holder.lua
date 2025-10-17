@@ -84,6 +84,33 @@ function Holder:getIndexOfCard(card)
 	return nil
 end
 
+--- Checks if a moving card is dropped within the holder
+function Holder:checkInHolder(x, y)
+	local addRange = self:getAddRange()
+	return x > addRange.minX and x < addRange.maxX and y > addRange.minY and y < addRange.maxY
+end
+
+--- gets the box that determines if a user
+--- dropped a card on the holder
+function Holder:getAddRange()
+	local lastCard = self.cards[#self.cards]
+	if lastCard == nil then
+		return {
+			minX = self.x,
+			maxX = self.x + self.width,
+			minY = self.y,
+			maxY = self.y + (self.height * 1.5),
+		}
+	else
+		return {
+			minX = self.x,
+			maxX = self.x + self.width,
+			minY = lastCard.y,
+			maxY = lastCard.y + (lastCard.height * 1.5), -- user can place on the last card or just a little below it
+		}
+	end
+end
+
 function Holder:draw()
 	if #self.cards == 0 then
 		love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
