@@ -1,31 +1,42 @@
+require("functions.functional-programming")
+
 Events = {}
 
 function Events:clicked(mouseX, mouseY)
 	print("Checking click at " .. mouseX .. " " .. mouseY)
-	for index, card in ipairs(States.gameState.activeCards) do
+	local isDrawPile = HolderLocations.drawPile:checkInHolder(mouseX, mouseY)
+	if isDrawPile then
+		HolderLocations:drawCard()
+		return
+	end
+	local foundCard = find(States.gameState.activeCards, function(card)
 		local isClicked = card:checkIsClicked(mouseX, mouseY)
 		local isDisplayed = card.isDisplayed
 		local hasParent = card.parent ~= nil
 
-		if isClicked and isDisplayed and hasParent then
-			print("found card")
-			States.gameState.movingCards.startingHolder = card.parent
-			card.isMoving = true
-			card.isClicked = true
+		return isClicked and isDisplayed and hasParent
+	end)
+	if foundCard then
+		if #States.gameState.movingCards.cards > 0 then
+			error("There should be no cards here")
+		end
+		print("found!!")
+		foundCard:debugPrint()
+
+		local foundIndex = foundCard.parent:getIndexOfCard(foundCard)
+		local holder = foundCard.parent
+		if foundIndex and holder then
+			States:setStartingHolder(holder)
 			States.gameState.moving = true
-			local moving = false
-			for _, holderCard in ipairs(card.parent.cards) do
-				local cardIndex = card.parent:getIndexOfCard(card)
-				if moving then
-					table.insert(States.gameState.movingCards.cards, holderCard)
-					table.remove(card.parent, cardIndex)
-				elseif holderCard.isMoving then
-					table.insert(States.gameState.movingCards.cards, holderCard)
-					table.remove(card.parent, cardIndex)
-					moving = true
-				end
+			while #holder.cards >= foundIndex do
+				table.insert(States.gameState.movingCards.cards, holder.cards[foundIndex])
+				holder:removeCard(holder.cards[foundIndex])
 			end
-			return
+			forEach(States.gameState.movingCards.cards, function(card)
+				card.isMoving = true
+				card.isMoving = true
+				card.isClicked = true
+			end)
 		end
 	end
 end
@@ -49,34 +60,30 @@ function Events:mouseReleased(mouseX, mouseY)
 
 	---@type fun(holder:Holder)
 	local sendToHolder = function(holder)
-		for _, card in ipairs(States.gameState.movingCards.cards) do
+		forEach(States.gameState.movingCards.cards, function(card)
 			print("adding to holder")
 			holder:addCard(card)
-			card.parent = holder
 			card.isMoving = false
 			card.isClicked = false
-			print("card pos before, x: " .. card.x .. " y: " .. card.y)
 			holder:setPositions()
-			print("card pos after, x: " .. card.x .. " y: " .. card.y)
-		end
+			holder:checkIsDisplayed()
+		end)
 	end
 	local targetHolder = HolderLocations:findHolder(mouseX, mouseY)
 	if targetHolder == nil then
 		print("No target")
-		print("Moving to holder " .. States.gameState.movingCards.startingHolder.x)
-		sendToHolder(States.gameState.movingCards.startingHolder)
+		sendToHolder(startingHolder)
+		States.gameState:reset()
 		return
 	end
 	local firstCard = States.gameState.movingCards.cards[1]
 
 	if firstCard and targetHolder:checkCanAdd(firstCard.rank, firstCard.suit) then
+		print("sending to target")
 		sendToHolder(targetHolder)
 	else
+		print("sending back, can't add")
 		sendToHolder(startingHolder)
 	end
-	States.gameState.movingCards = {
-		cards = {},
-		startingHolder = nil,
-		targetHolder = nil,
-	}
+	States.gameState:reset()
 end

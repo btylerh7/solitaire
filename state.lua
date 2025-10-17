@@ -43,4 +43,9 @@ function States.gameState:draw()
 	end
 end
 
+---@param holder Holder
+function States:setStartingHolder(holder)
+	self.gameState.movingCards.startingHolder = holder
+end
+
 return States

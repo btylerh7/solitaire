@@ -126,27 +126,26 @@ end
 
 ---Used when draw pile is clicked to reveal extra card
 function HolderLocations:drawCard()
+	-- TODO not working
 	if #self.drawPile.cards > 0 then
 		local nextCard = self.drawPile.cards[#self.drawPile.cards]
-		nextCard:toggleDisplayed()
+		nextCard.isDisplayed = true
 		nextCard.isDragable = true
 		self.drawnPile:addCard(nextCard)
-		self.drawPile:removeCard(#self.drawPile.cards)
-		return
+		self.drawPile:removeCard(nextCard)
 	end
-	if #self.drawPile == 0 and State.remainingRedraws > 0 then
+	if #self.drawPile == 0 and States.gameState.remainingRedraws > 0 then
 		print("time to reset")
 		while #self.drawnPile.cards > 0 do
 			local currentCard = self.drawnPile.cards[#self.drawnPile.cards]
 			currentCard.isDragable = false
-			-- currentCard.isDisplayed = false
-			currentCard:toggleDisplayed()
+			currentCard.isDisplayed = false
 			self.drawPile:addCard(currentCard)
-			self.drawnPile:removeCard(#self.drawnPile.cards)
+			self.drawnPile:removeCard(currentCard)
 		end
-		State.remainingRedraws = State.remainingRedraws - 1
-		return
+		States.gameState.remainingRedraws = States.gameState.remainingRedraws - 1
 	end
+	self.drawnPile:checkIsDisplayed()
 end
 
 function HolderLocations:getHolderType(x, y)

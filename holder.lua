@@ -1,3 +1,4 @@
+require("functions.functional-programming")
 ---@class HolderType
 HolderType = {
 	ACE = "ace",
@@ -38,12 +39,8 @@ end
 function Holder:setPositions()
 	for index, card in ipairs(self.cards) do
 		if self.type == HolderType.GAME then
-			if card.isMoving then
-				break
-			end
 			card.x = self.x
 			card.y = self.y + (G.gameHolderYStep * (index - 1))
-			card.isDisplayed = index == #self.cards
 			card.isInStack = index ~= #self.cards
 			card:setQuad()
 		else
@@ -53,21 +50,38 @@ function Holder:setPositions()
 	end
 end
 
+function Holder:checkIsDisplayed()
+	for index, card in ipairs(self.cards) do
+		card.isDisplayed = index == #self.cards
+	end
+end
+
 ---@param card Card
 function Holder:addCard(card)
+	print(card.isDisplayed)
 	if self.cards == nil then
 		self.cards = {}
 	end
 	table.insert(self.cards, card)
 	card.parent = self
 	self:setPositions()
+	self:debugPrint()
 end
 
 ---@param card Card
-function Holder:removeCard(index)
-	self.cards[index].parent = nil
-	table.remove(self.cards, index)
-	self:setPositions()
+function Holder:removeCard(card)
+	if card == nil then
+		error("Tried to get index of card in holder, but the holder was nil! Wow, how could you do something so dumb!")
+	end
+	local index = self:getIndexOfCard(card)
+	if index then
+		self.cards[index].parent = nil
+		table.remove(self.cards, index)
+		self:setPositions()
+		self:debugPrint()
+	else
+		error("Card not found in holder?")
+	end
 end
 
 function Holder:checkCanAdd(rank, suit)
@@ -76,6 +90,9 @@ end
 
 ---@param card Card
 function Holder:getIndexOfCard(card)
+	if card == nil then
+		error("Tried to get index of card that doesn't exist, why on earth would you do that? Dummy")
+	end
 	for index, cardToCheck in ipairs(self.cards) do
 		if card.rank == cardToCheck.rank and card.suit == cardToCheck.suit then
 			return index
@@ -119,4 +136,11 @@ function Holder:draw()
 			card:draw()
 		end
 	end
+end
+
+function Holder:debugPrint()
+	print("--------")
+	print("Holder debug print")
+	print("Holder cards length: ", #self.cards)
+	print("--------")
 end

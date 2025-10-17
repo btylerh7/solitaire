@@ -38,6 +38,8 @@ function Card.new(rank, suit, isDisplayed)
 	card.width = G.cardWidth
 	card.height = G.cardHeight
 	card.isDisplayed = isDisplayed
+	card.isMoving = false
+	card.isClicked = false
 	card:setQuad()
 	return card
 end
@@ -75,4 +77,14 @@ function Card:draw()
 	love.graphics.setBlendMode("alpha", "alphamultiply")
 	love.graphics.draw(self.sprite, self.quad, self.x, self.y, nil, G.zoomMultiplier, G.zoomMultiplier)
 	-- love.graphics.setShader()
+end
+
+function Card:debugPrint()
+	print("-----------")
+	print("Card debug print")
+	print("Card rank: " .. self.rank)
+	print("Card suit: " .. self.suit)
+	print("Card is moving: ", self.isMoving)
+	print("Card is displayed: ", self.isDisplayed)
+	print("-----------")
 end
