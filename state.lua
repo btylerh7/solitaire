@@ -19,6 +19,34 @@ States.gameLocation = {
 ---@field reset fun(self)
 States.gameState = {}
 
+---@class States.clickTimer
+--- used for tracking double click
+---@field clickTime number
+---@field clickInterval number
+---@field singleClickPending boolean
+---@field clickX number
+---@field clickY number
+States.clickTimer = {}
+
+function States:reset()
+	self.gameState:reset()
+	self.clickTimer:reset()
+end
+
+function States:new()
+	States.clickTimer:new()
+	States.gameState:new()
+end
+function States.clickTimer:new()
+	self:reset()
+	self.clickInterval = 0.15
+end
+function States.clickTimer:reset()
+	self.clickTime = love.timer.getTime()
+	self.singleClickPending = false
+	self.clickX = 0
+	self.clickY = 0
+end
 function States.gameState:new()
 	self:reset()
 	self.activeCards = setUpCards()
@@ -46,6 +74,19 @@ end
 ---@param holder Holder
 function States:setStartingHolder(holder)
 	self.gameState.movingCards.startingHolder = holder
+end
+
+function States.gameState:checkIsWin()
+	local isWin = true
+	forEach(HolderLocations.aceSlots, function(aceHolder)
+		if isWin then
+			local isFull = #aceHolder.cards == 13
+			if not isFull then
+				isWin = false
+			end
+		end
+	end)
+	self.isWin = isWin
 end
 
 return States

@@ -62,7 +62,6 @@ end
 
 ---@param card Card
 function Holder:addCard(card)
-	print(card.isDisplayed)
 	if self.cards == nil then
 		self.cards = {}
 	end

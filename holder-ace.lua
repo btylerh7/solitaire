@@ -10,7 +10,6 @@ function AceHolder:checkCanAdd(rank, suit)
 	return false
 end
 function AceHolder:addCard(card)
-	print(card.isDisplayed)
 	if self.cards == nil then
 		self.cards = {}
 	end
@@ -21,4 +20,5 @@ function AceHolder:addCard(card)
 	table.insert(self.cards, card)
 	card.parent = self
 	self:setPositions()
+	States.gameState:checkIsWin()
 end

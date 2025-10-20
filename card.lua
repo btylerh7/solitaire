@@ -30,7 +30,7 @@ ActiveCards = {}
 function Card.new(rank, suit, isDisplayed)
 	--- @class Card
 	local card = setmetatable({}, Card)
-	card.sprite = love.graphics.newImage("cards/cards-v2.png")
+	card.sprite = G.cardSprite
 	card.rank = rank
 	card.suit = suit
 	card.width = G.cardWidth

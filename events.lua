@@ -22,25 +22,52 @@ function Events:doubleClicked(mouseX, mouseY)
 	if not isDrawPile and #isAce == 0 then
 		print("not draw or ace")
 		if foundCard then
-			print("found card")
-			local availableAceSlots = filter(HolderLocations.aceSlots, function(holder)
-				return holder:checkCanAdd(foundCard.rank, foundCard.suit)
-			end)
-			if #availableAceSlots > 0 then
-				local holder = availableAceSlots[1]
-				local parent = foundCard.parent
-				foundCard.parent:removeCard(foundCard)
-				if parent then
-					parent:displayLastCard()
+			local foundIndex = foundCard.parent:getIndexOfCard(foundCard)
+			if foundIndex == #foundCard.parent.cards then
+				print("found card")
+				local availableAceSlots = filter(HolderLocations.aceSlots, function(holder)
+					return holder:checkCanAdd(foundCard.rank, foundCard.suit)
+				end)
+				if #availableAceSlots > 0 then
+					local holder = availableAceSlots[1]
+					local parent = foundCard.parent
+					foundCard.parent:removeCard(foundCard)
+					if parent then
+						parent:displayLastCard()
+					end
+					holder:addCard(foundCard)
+					holder:setPositions()
+					holder:displayLastCard()
 				end
-				holder:addCard(foundCard)
-				holder:setPositions()
-				holder:displayLastCard()
 			end
 		end
 	end
 	print("-----")
 	print("-----")
+end
+function Events:checkClickType(mouseX, mouseY)
+	if HolderLocations.drawPile:checkInHolder(mouseX, mouseY) then
+		--No need to check double click
+		self:clicked(mouseX, mouseY)
+		return
+	end
+	local currentTime = love.timer.getTime()
+	local timer = States.clickTimer
+
+	local timeBetweenClicks = currentTime - timer.clickTime
+
+	if timeBetweenClicks < timer.clickInterval then
+		-- second click within clicking interval... double click
+		timer.singleClickPending = false
+		self:doubleClicked(mouseX, mouseY)
+	else
+		-- could be single click
+		print("could be single click")
+		timer.clickTime = currentTime
+		timer.clickX = mouseX
+		timer.clickY = mouseY
+		timer.singleClickPending = true
+	end
 end
 function Events:clicked(mouseX, mouseY)
 	print("Checking click at " .. mouseX .. " " .. mouseY)
@@ -108,7 +135,7 @@ function Events:mouseReleased(mouseX, mouseY)
 	if targetHolder == nil then
 		print("No target")
 		sendToHolder(startingHolder)
-		States.gameState:reset()
+		States:reset()
 		return
 	end
 	local firstCard = States.gameState.movingCards.cards[1]
@@ -121,5 +148,5 @@ function Events:mouseReleased(mouseX, mouseY)
 		print("sending back, can't add")
 		sendToHolder(startingHolder)
 	end
-	States.gameState:reset()
+	States:reset()
 end
