@@ -1,30 +1,43 @@
----@class Box:Base
-Box = Base:extend()
+local class = require("engine.object-v2")
+
+---@class Box
+---@field x number
+---@field y number
+---@field width number
+---@field height number
+local Box = class.new("Box")
 
 function Box:new(x, y, width, height)
+	self.x = x
+	self.y = y
 	self.width = width
 	self.height = height
-	self:setPosition(x, y)
-	return self
 end
 
-function Box:setPosition(x, y)
-	self.position = { x = x, y = y }
-	self.maxX = x + self.width
-	self.maxY = y + self.height
+function Box:getBoundingRect()
+	return {
+		x1 = self.x,
+		x2 = self.x + self.width,
+		y1 = self.y,
+		y2 = self.y + self.height,
+	}
 end
-function Box:isInBox(x, y, maxHeight)
-	local minX = self.position.x
-	local maxX = self.maxX
-	local minY = self.position.y
-	local maxY = 0
+
+---@param maxHeight? number
+function Box:getClickableRange(maxHeight)
+	local boundingRect = self:getBoundingRect()
 	if maxHeight then
-		maxY = maxHeight + self.position.y
-	else
-		maxY = self.maxY
+		boundingRect.y2 = boundingRect.y1 + maxHeight
 	end
-	local inX = x > minX and x < maxX
-	local inY = y > minY and y < maxY
-
-	return inX == true and inY == true
+	return boundingRect
 end
+
+---@param x number
+---@param y number
+---@param maxHeight? number
+function Box:checkInBox(x, y, maxHeight)
+	local boundingRect = self:getClickableRange(maxHeight)
+	return x > boundingRect.x1 and x < boundingRect.x2 and y > boundingRect.y1 and y < boundingRect.y2
+end
+
+return Box

@@ -1,4 +1,4 @@
-require("card")
+require("game.entities.card")
 require("holder")
 require("holder-game")
 require("holder-ace")
