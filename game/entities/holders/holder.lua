@@ -5,9 +5,10 @@ local Box = require("engine.box")
 -- local Card = require("game.entities.card")
 ---@class HolderType
 HolderType = {
-	ACE = "ace",
-	GAME = "game",
-	DRAW = "draw",
+	FOUNDATION = "ace",
+	TABLEAU = "game",
+	STOCK = "draw",
+	WASTE = "waste",
 }
 
 --- @class Holder
@@ -37,7 +38,7 @@ end
 ---This is how the game holders stack
 function Holder:setPositions()
 	for index, card in ipairs(self.cards) do
-		if self.type == HolderType.GAME then
+		if self.type == HolderType.TABLEAU then
 			local yTransformMultiplier = G.gameHolderYStep * (index - 1)
 			card:move(self.box.x, self.box.y + yTransformMultiplier)
 			card.isInStack = index ~= #self.cards

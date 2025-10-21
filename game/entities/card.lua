@@ -14,6 +14,7 @@ local Box = require("engine.box")
 ---@field quad love.Quad
 local Card = class.new("Card")
 
+---@return Card
 function Card:new(rank, suit)
 	local card = setmetatable({}, self)
 	card.box = Box:new(0, 0, G.cardWidth, G.cardHeight)
@@ -55,7 +56,7 @@ function Card:setQuad()
 	-- Starts on X = 0 so columnNumber - 1
 	local startX = (columnNumber - 1) * cellWidth
 	local startY = (rowNumber - 1) * cellHeight
-	print("StartX: ", startX, "StartY: ", startY, "column: ", columnNumber, "row", rowNumber)
+	-- print("StartX: ", startX, "StartY: ", startY, "column: ", columnNumber, "row", rowNumber)
 	local quad = love.graphics.newQuad(startX, startY, cellWidth, cellHeight, width, height)
 	self.quad = quad
 end

@@ -1,4 +1,6 @@
 require("functions.shuffle")
+local Klondike = require("game.rules.klondike")
+local Rule = require("game.rules.rule")
 
 local States = {}
 
@@ -15,6 +17,8 @@ States.gameLocation = {
 ---@field draw fun(self)
 ---@field remainingRedraws number
 ---@field isWin boolean
+---@field isBoardSet boolean
+---@field gameRules Rule | Klondike
 ---@field new fun(self)
 ---@field reset fun(self)
 States.gameState = {}
@@ -49,6 +53,8 @@ function States.clickTimer:reset()
 end
 function States.gameState:new()
 	self:reset()
+	self.gameRules = Klondike:new()
+	self.isBoardSet = false
 	self.activeCards = setUpCards()
 	self.remainingRedraws = 3
 	self.isWin = false
@@ -77,16 +83,18 @@ function States:setStartingHolder(holder)
 end
 
 function States.gameState:checkIsWin()
-	local isWin = true
-	forEach(HolderLocations.aceSlots, function(aceHolder)
-		if isWin then
-			local isFull = #aceHolder.cards == 13
-			if not isFull then
-				isWin = false
+	if self.isBoardSet then
+		local isWin = true
+		forEach(HolderLocations.aceSlots, function(aceHolder)
+			if isWin then
+				local isFull = #aceHolder.cards == 13
+				if not isFull then
+					isWin = false
+				end
 			end
-		end
-	end)
-	self.isWin = isWin
+		end)
+		self.isWin = isWin
+	end
 end
 
 return States

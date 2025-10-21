@@ -3,6 +3,7 @@ local Holder = require("game.entities.holders.holder")
 local DrawHolder = require("game.entities.holders.holder-draw")
 local AceHolder = require("game.entities.holders.holder-ace")
 local GameHolder = require("game.entities.holders.holder-game")
+local Rules = require("game.rules.rules")
 LocationConfig = {
 	stepCount = 125,
 	topRowY = 15,
@@ -13,11 +14,22 @@ LocationConfig = {
 
 ---@class HolderLocations
 ---@field cardSlots GameHolder[]
----@field aceSlots AceHolder[]
+---@field aceSlots Tableau[]
 ---@field drawPile DrawHolder
 ---@field drawnPile DrawHolder
 
 local HolderLocations = class.new("HolderLocations")
+
+function HolderLocations:setupBoard()
+	assert(States.gameState.gameRules ~= nil, "Game Rules not set")
+	local holders = States.gameState.gameRules:deal()
+	print(holders.foundation, holders.tableau)
+	assert(holders.waste ~= nil, "Waste pile must not be nil")
+	self.cardSlots = holders.tableau
+	self.aceSlots = holders.foundation
+	self.drawPile = holders.stock
+	self.drawnPile = holders.waste[1]
+end
 
 function HolderLocations:setup()
 	local steppedX = function(startingValue, index)
@@ -159,11 +171,11 @@ function HolderLocations:getHolderType(x, y)
 	local aceHolder = not gameHolder and x > LocationConfig.aceAreaX
 	local drawPileHolder = not aceHolder and x > LocationConfig.leftSideX
 	if gameHolder then
-		return HolderType.GAME
+		return HolderType.TABLEAU
 	elseif aceHolder then
-		return HolderType.ACE
+		return HolderType.FOUNDATION
 	elseif drawPileHolder then
-		return HolderType.DRAW
+		return HolderType.STOCK
 	else
 		return nil
 	end

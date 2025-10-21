@@ -11,11 +11,14 @@ States = require("state")
 States:new()
 local ScoreLabelClass = require("game.ui.score-label")
 local WinLabelClass = require("game.ui.win-label")
+local Rules = require("game.rules.rules")
 HolderLocations = require("game.entities.holder-locations")
 
 function love.load()
-	HolderLocations:setup()
-	HolderLocations:addShuffledCards()
+	HolderLocations:setupBoard()
+	States.gameState.isBoardSet = true
+	-- HolderLocations:setup()
+	-- HolderLocations:addShuffledCards()
 	scoreLabel = ScoreLabelClass:new(
 		LocationConfig.leftSideX,
 		love.graphics.getHeight() - 100,

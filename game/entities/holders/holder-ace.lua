@@ -1,15 +1,15 @@
 local class = require("engine.object-v2")
 local Holder = require("game.entities.holders.holder")
----@class AceHolder: Holder
-local AceHolder = class.inherit(Holder, "AceHolder")
+---@class Tableau: Holder
+local Tableau = class.inherit(Holder, "Tableau")
 
----@rturn AceHolder
-function AceHolder:new(x, y, type)
+---@rturn Tableau
+function Tableau:new(x, y, type)
 	local holder = Holder.new(self, x, y, type)
 	return holder
 end
 
-function AceHolder:checkCanAdd(rank, suit)
+function Tableau:checkCanAdd(rank, suit)
 	if self.suit == nil then
 		return rank == 1
 	end
@@ -18,7 +18,7 @@ function AceHolder:checkCanAdd(rank, suit)
 	end
 	return false
 end
-function AceHolder:addCard(card)
+function Tableau:addCard(card)
 	if self.cards == nil then
 		self.cards = {}
 	end
@@ -32,4 +32,4 @@ function AceHolder:addCard(card)
 	States.gameState:checkIsWin()
 end
 
-return AceHolder
+return Tableau

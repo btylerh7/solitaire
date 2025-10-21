@@ -31,6 +31,65 @@
 
 
 
+# Solitaire terms
+For reference [Guide at solitaired.com](https://solitaired.com/guides/how-to-play-solitaire)
+- Stockpile (stock)
+- Waste Pile (waste)
+- Foundation Piles (foundation)
+- Tableau (tableau)
 
+# Klondike Specific
+- stock
+    - state to track
+        - redraws
+        - isEmpty
+        - cards
+    - possible actions
+        - draw (move to waste)
+- waste
+    - state to track
+        - cards
+    - possible actions
+        - send to foundation
+        - send to tableau
+        - reset (move all to stock)
+- foundation
+    - state to track
+        - overall
+            - game progress (how many cards left to add)
+        - individual
+            - cards
+            - is empty
+            - suit
+            - next rank
+            - is full (all 13 cards in)
+- tableau
+    - state to track
+        - individual
+            - cards
+            - is empty
+        - possible actions
+            - move to foundation
+            - move to other tableau column
+    
+- individual cards
+    - state to track
+        - is displayed
+        - is in stack
+        - can be dragged
+        - draggable range
 
-
+## Game Rule Calculations
+- dealing
+    - cards per column
+    - card is in stack
+    - card is displayed
+- moving
+    - tableau to tableau
+    - tableau to foundation
+    - tableau to waste (for freecell)
+    - stock to waste
+    - waste to tableau
+    - waste to foundation
+- conditions
+    - can transfer
