@@ -65,9 +65,9 @@ end
 
 function States.gameState:draw()
 	if self.moving then
-		for i, card in ipairs(self.movingCards.cards) do
+		forEach(self.movingCards.cards, function(card)
 			card:draw()
-		end
+		end)
 	end
 end
 

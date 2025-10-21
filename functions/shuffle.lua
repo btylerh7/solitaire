@@ -1,23 +1,20 @@
-function setUpCards()
-	local cards = loadCards()
-	return shuffle(cards)
-end
+local Card = require("game.entities.card")
 
 ---@return Card[]
-function loadCards()
+local function loadCards()
 	local cards = {}
 	for i = 1, 13, 1 do
-		table.insert(cards, Card.new(i, 1, false))
-		table.insert(cards, Card.new(i, 2, false))
-		table.insert(cards, Card.new(i, 3, false))
-		table.insert(cards, Card.new(i, 4, false))
+		table.insert(cards, Card:new(i, 1))
+		table.insert(cards, Card:new(i, 2))
+		table.insert(cards, Card:new(i, 3))
+		table.insert(cards, Card:new(i, 4))
 	end
 	return cards
 end
 
 ---@param cards Card[]
 ---@return Card[]
-function shuffle(cards)
+local function shuffle(cards)
 	local activeCards = {}
 	math.randomseed(os.time())
 	while #cards > 0 do
@@ -26,4 +23,9 @@ function shuffle(cards)
 		table.remove(cards, randomIndex)
 	end
 	return activeCards
+end
+
+function setUpCards()
+	local cards = loadCards()
+	return shuffle(cards)
 end

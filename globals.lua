@@ -6,6 +6,8 @@ G.zoomMultiplier = 1
 G.shaders = {}
 G.shaders.outline = love.graphics.newShader("assets/shaders/outline.glsl")
 G.cardSprite = love.graphics.newImage("assets/cards/cards-v2.png")
-G.uiFont = love.graphics.newFont("assets/fonts/TerminessNerdFontMono-Regular.ttf", 69, "normal")
+G.uiFont = love.graphics.newFont("assets/fonts/TerminessNerdFontMono-Regular.ttf", 45, "normal")
+G.sounds = {}
+G.sounds.cardClick = love.audio.newSource("assets/audio/card-click.ogg", "static")
 
 return G

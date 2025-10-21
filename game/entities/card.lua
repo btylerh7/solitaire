@@ -1,57 +1,50 @@
-require("engine/object")
+local class = require("engine.object-v2")
+local Box = require("engine.box")
 
-CardParent = {
-	ACE = "ace",
-	DRAW = "draw",
-	DRAWN = "drawn",
-	MOVING = "moving",
-}
-
----@class Card:Object
----@field rank number
+---@class Card
 ---@field suit number
----@field width number
----@field height number
+---@field rank number
+---@field box Box
 ---@field isDisplayed boolean
 ---@field isInStack boolean
 ---@field parentType string: One of CardParent
 ---@field parent Holder | nil
----@field x number
----@field y number
+---@field sprite love.Image
 ---@field setQuad fun(self)
 ---@field quad love.Quad
-Card = Object:extend()
-Card.__index = Card
-ActiveCards = {}
+local Card = class.new("Card")
 
----@param rank number
----@param suit number
----@param isDisplayed boolean
-function Card.new(rank, suit, isDisplayed)
-	--- @class Card
-	local card = setmetatable({}, Card)
-	card.sprite = G.cardSprite
-	card.rank = rank
+function Card:new(rank, suit)
+	local card = setmetatable({}, self)
+	card.box = Box:new(0, 0, G.cardWidth, G.cardHeight)
 	card.suit = suit
-	card.width = G.cardWidth
-	card.height = G.cardHeight
-	card.isDisplayed = isDisplayed
+	card.rank = rank
+	card.sprite = G.cardSprite
+	card.isDisplayed = false
+	card.isInStack = true
 	card:setQuad()
 	return card
 end
 
-function Card:checkIsClicked(x, y)
-	local boundingBox = self:getBoundingBox()
+function Card:getMaxHeight()
 	if self.isInStack then
-		boundingBox.maxY = boundingBox.minY + G.gameHolderYStep
+		return G.gameHolderYStep
+	else
+		return self.box.height
 	end
-	return x > boundingBox.minX and x < boundingBox.maxX and y > boundingBox.minY and y < boundingBox.maxY
 end
+
+function Card:checkIsClicked(x, y)
+	return self.box:checkInBox(x, y, self:getMaxHeight())
+end
+
 function Card:setQuad()
 	local width = self.sprite:getWidth()
 	local height = self.sprite:getHeight()
-	local cardWidth = G.cardWidth
-	local cardHeight = G.cardHeight
+	local cellWidth = width / 13
+	local cellHeight = height / 5
+	local cardWidth = self.box.width
+	local cardHeight = self.box.height
 	local columnNumber = self.rank
 	local rowNumber = self.suit
 	if self.isDisplayed == false then
@@ -60,26 +53,33 @@ function Card:setQuad()
 	end
 	-- Rank will match card number (ex. 2 of hearts will have rank 2)
 	-- Starts on X = 0 so columnNumber - 1
-	local startX = (columnNumber - 1) * cardWidth
-	local startY = (rowNumber * cardHeight) - cardHeight
-	local quad = love.graphics.newQuad(startX, startY, cardWidth, cardHeight, width, height)
+	local startX = (columnNumber - 1) * cellWidth
+	local startY = (rowNumber - 1) * cellHeight
+	print("StartX: ", startX, "StartY: ", startY, "column: ", columnNumber, "row", rowNumber)
+	local quad = love.graphics.newQuad(startX, startY, cellWidth, cellHeight, width, height)
 	self.quad = quad
 end
-
 function Card:draw()
 	-- love.graphics.setShader(G.shaders.outline)
 	-- G.shaders.outline:send("outline_color", { 0, 0, 0, 1 })
 	-- G.shaders.outline:send("border_thickness", 0.007)
 	love.graphics.setBlendMode("alpha", "alphamultiply")
-	love.graphics.draw(self.sprite, self.quad, self.x, self.y, nil, G.zoomMultiplier, G.zoomMultiplier)
+	love.graphics.draw(self.sprite, self.quad, self.box.x, self.box.y, nil, G.zoomMultiplier, G.zoomMultiplier)
+	love.graphics.setColor(1, 1, 1, 1)
 	-- love.graphics.setShader()
 end
 
+function Card:move(x, y)
+	self.box.x = x
+	self.box.y = y
+end
 function Card:debugPrint()
 	print("-----------")
-	print("Card debug print")
-	print("Card rank: " .. self.rank)
-	print("Card suit: " .. self.suit)
-	print("Card is displayed: ", self.isDisplayed)
+	print("CardOld debug print")
+	print("CardOld rank: " .. self.rank)
+	print("CardOld suit: " .. self.suit)
+	print("CardOld is displayed: ", self.isDisplayed)
 	print("-----------")
 end
+
+return Card

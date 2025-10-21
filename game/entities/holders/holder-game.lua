@@ -1,8 +1,18 @@
+local class = require("engine.object-v2")
+local Holder = require("game.entities.holders.holder")
 ---@class GameHolder: Holder
 ---@field lowestRank number | nil
 ---@field lowestSuit number | nil
-GameHolder = Holder:extend()
+local GameHolder = class.inherit(Holder, "GameHolder")
 
+---@return GameHolder
+function GameHolder:new(x, y, type)
+	---@type GameHolder
+	local holder = Holder.new(self, x, y, type)
+	holder.lowestRank = nil
+	holder.lowestSuit = nil
+	return holder
+end
 ---Sets the positions of each card in holder based on the holder's position
 ---This is how the game holders stack
 function GameHolder:setPositions()
@@ -13,8 +23,7 @@ function GameHolder:setPositions()
 	end
 	for index, card in ipairs(self.cards) do
 		local currentYStep = (index - 1) * yStep
-		card.x = self.x
-		card.y = self.y + currentYStep
+		card:move(self.box.x, self.box.y + currentYStep)
 		if index == #self.cards then
 			card.isInStack = false
 			self.lowestRank = card.rank
@@ -50,3 +59,5 @@ function GameHolder:checkCanAdd(rank, suit)
 		return false
 	end
 end
+
+return GameHolder

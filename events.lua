@@ -36,6 +36,7 @@ function Events:doubleClicked(mouseX, mouseY)
 						parent:displayLastCard()
 					end
 					holder:addCard(foundCard)
+					love.audio.play(G.sounds.cardClick)
 					holder:setPositions()
 					holder:displayLastCard()
 				end
@@ -74,6 +75,7 @@ function Events:clicked(mouseX, mouseY)
 	local isDrawPile = HolderLocations.drawPile:checkInHolder(mouseX, mouseY)
 	if isDrawPile then
 		HolderLocations:drawCard()
+		love.audio.play(G.sounds.cardClick)
 		return
 	end
 	local foundCard = find(States.gameState.activeCards, function(card)
@@ -129,6 +131,7 @@ function Events:mouseReleased(mouseX, mouseY)
 			holder:addCard(card)
 			holder:setPositions()
 			holder:displayLastCard()
+			love.audio.play(G.sounds.cardClick)
 		end)
 	end
 	local targetHolder = HolderLocations:findHolder(mouseX, mouseY)

@@ -8,10 +8,12 @@ local class = require("engine.object-v2")
 local Box = class.new("Box")
 
 function Box:new(x, y, width, height)
-	self.x = x
-	self.y = y
-	self.width = width
-	self.height = height
+	local box = setmetatable({}, self)
+	box.x = x
+	box.y = y
+	box.width = width
+	box.height = height
+	return box
 end
 
 function Box:getBoundingRect()

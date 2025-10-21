@@ -1,4 +1,8 @@
-local Utils = require("utils.utils")
+local class = require("engine.object-v2")
+local Holder = require("game.entities.holders.holder")
+local DrawHolder = require("game.entities.holders.holder-draw")
+local AceHolder = require("game.entities.holders.holder-ace")
+local GameHolder = require("game.entities.holders.holder-game")
 LocationConfig = {
 	stepCount = 125,
 	topRowY = 15,
@@ -10,37 +14,42 @@ LocationConfig = {
 ---@class HolderLocations
 ---@field cardSlots GameHolder[]
 ---@field aceSlots AceHolder[]
-HolderLocations = {}
+---@field drawPile DrawHolder
+---@field drawnPile DrawHolder
+
+local HolderLocations = class.new("HolderLocations")
 
 function HolderLocations:setup()
 	local steppedX = function(startingValue, index)
 		return startingValue + (LocationConfig.stepCount * (index - 1))
 	end
+
 	local startX = LocationConfig.leftSideX
 	local startY = LocationConfig.topRowY
-	HolderLocations.drawPile = DrawHolder:new(steppedX(startX, 1), startY, "draw")
-	HolderLocations.drawnPile = DrawHolder:new(steppedX(startX, 2), startY, "drawn")
+
+	self.drawPile = DrawHolder:new(steppedX(startX, 1), startY, "draw")
+	self.drawnPile = DrawHolder:new(steppedX(startX, 2), startY, "drawn")
 
 	startX = LocationConfig.aceAreaX
 	startY = LocationConfig.topRowY
-	HolderLocations.aceSlots = {}
-	HolderLocations.cardSlots = {}
-
-	table.insert(HolderLocations.aceSlots, AceHolder:new(steppedX(startX, 1), startY, "ace"))
-	table.insert(HolderLocations.aceSlots, AceHolder:new(steppedX(startX, 2), startY, "ace"))
-	table.insert(HolderLocations.aceSlots, AceHolder:new(steppedX(startX, 3), startY, "ace"))
-	table.insert(HolderLocations.aceSlots, AceHolder:new(steppedX(startX, 4), startY, "ace"))
-
+	self.aceSlots = {
+		AceHolder:new(steppedX(startX, 1), startY, "ace"),
+		AceHolder:new(steppedX(startX, 2), startY, "ace"),
+		AceHolder:new(steppedX(startX, 3), startY, "ace"),
+		AceHolder:new(steppedX(startX, 4), startY, "ace"),
+	}
 	startX = LocationConfig.leftSideX
 	startY = LocationConfig.cardRowY
 
-	table.insert(HolderLocations.cardSlots, GameHolder:new(steppedX(startX, 1), startY, "game"))
-	table.insert(HolderLocations.cardSlots, GameHolder:new(steppedX(startX, 2), startY, "game"))
-	table.insert(HolderLocations.cardSlots, GameHolder:new(steppedX(startX, 3), startY, "game"))
-	table.insert(HolderLocations.cardSlots, GameHolder:new(steppedX(startX, 4), startY, "game"))
-	table.insert(HolderLocations.cardSlots, GameHolder:new(steppedX(startX, 5), startY, "game"))
-	table.insert(HolderLocations.cardSlots, GameHolder:new(steppedX(startX, 6), startY, "game"))
-	table.insert(HolderLocations.cardSlots, GameHolder:new(steppedX(startX, 7), startY, "game"))
+	self.cardSlots = {
+		GameHolder:new(steppedX(startX, 1), startY, "game"),
+		GameHolder:new(steppedX(startX, 2), startY, "game"),
+		GameHolder:new(steppedX(startX, 3), startY, "game"),
+		GameHolder:new(steppedX(startX, 4), startY, "game"),
+		GameHolder:new(steppedX(startX, 5), startY, "game"),
+		GameHolder:new(steppedX(startX, 6), startY, "game"),
+		GameHolder:new(steppedX(startX, 7), startY, "game"),
+	}
 end
 
 --- Uses States.gameState.activeCards to place cards in correct spots
@@ -75,14 +84,6 @@ function HolderLocations:addShuffledCards()
 	end
 end
 
---- @param card Card
---- @param slot string
-function HolderLocations:addCard(card, slot)
-	if self[slot] then
-		table.insert(self[slot].cards, card)
-	end
-end
-
 function HolderLocations:updateAll(dt)
 	self.drawPile:update(dt)
 	self.drawnPile:update(dt)
@@ -96,12 +97,12 @@ end
 function HolderLocations:drawAll()
 	self.drawPile:draw()
 	self.drawnPile:draw()
-	for index, value in ipairs(self.cardSlots) do
-		value:draw()
-	end
-	for index, value in ipairs(self.aceSlots) do
-		value:draw()
-	end
+	forEach(self.cardSlots, function(slot)
+		slot:draw()
+	end)
+	forEach(self.aceSlots, function(slot)
+		slot:draw()
+	end)
 end
 
 ---Used to determine if a point is inside any of the game's holders
@@ -132,6 +133,7 @@ function HolderLocations:drawCard()
 		local nextCard = drawPile[#drawPile]
 		self.drawPile:removeCard(nextCard)
 		nextCard.isDisplayed = true
+		print("setting quad")
 		nextCard:setQuad()
 		self.drawnPile:addCard(nextCard)
 	elseif States.gameState.remainingRedraws > 0 then
@@ -140,6 +142,7 @@ function HolderLocations:drawCard()
 		while #self.drawnPile.cards > 0 do
 			local currentCard = self.drawnPile.cards[#self.drawnPile.cards]
 			currentCard.isDisplayed = false
+			print("setting quad")
 			currentCard:setQuad()
 			self.drawPile:addCard(currentCard)
 			self.drawnPile:removeCard(currentCard)
@@ -166,21 +169,4 @@ function HolderLocations:getHolderType(x, y)
 	end
 end
 
----@param card Card
---- Add to ace slot if available
-function HolderLocations:checkAceSlots(card)
-	for _, holder in ipairs(self.aceSlots) do
-		local canAdd = holder:checkCanAdd(card.rank, card.suit)
-		if canAdd == true then
-			print("Adding to ace holder")
-			print(card.rank)
-			print(card.suit)
-			State:setTargetHolder(holder)
-			State:transferCards(canAdd)
-			self.doubleClick = false
-			return
-		end
-	end
-	self.doubleClick = false
-	return
-end
+return HolderLocations

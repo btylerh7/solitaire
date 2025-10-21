@@ -1,5 +1,14 @@
+local class = require("engine.object-v2")
+local Holder = require("game.entities.holders.holder")
 ---@class AceHolder: Holder
-AceHolder = Holder:extend()
+local AceHolder = class.inherit(Holder, "AceHolder")
+
+---@rturn AceHolder
+function AceHolder:new(x, y, type)
+	local holder = Holder.new(self, x, y, type)
+	return holder
+end
+
 function AceHolder:checkCanAdd(rank, suit)
 	if self.suit == nil then
 		return rank == 1
@@ -22,3 +31,5 @@ function AceHolder:addCard(card)
 	self:setPositions()
 	States.gameState:checkIsWin()
 end
+
+return AceHolder

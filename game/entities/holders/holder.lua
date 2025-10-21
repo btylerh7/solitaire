@@ -1,4 +1,8 @@
 require("functions.functional-programming")
+local class = require("engine.object-v2")
+local Box = require("engine.box")
+-- ---@module "game.entities.card"
+-- local Card = require("game.entities.card")
 ---@class HolderType
 HolderType = {
 	ACE = "ace",
@@ -6,29 +10,22 @@ HolderType = {
 	DRAW = "draw",
 }
 
---- @class Holder:Base
---- @field x number
---- @field y number
---- @field width number
---- @field height number
+--- @class Holder
+--- @field box Box
 --- @field type string
 --- @field cards Card[]
 --- @field rank number | nil -- for ace type
 --- @field suit number | nil -- for ace type
 --- @field nextRank number
 --- @field nextSuit number[]
-Holder = Base:extend()
+local Holder = class.new("Holder")
 
 ---@param x number
 ---@param y number
 ---@param type string
 function Holder:new(x, y, type)
-	---@class Holder:Base
 	local holder = setmetatable({}, self)
-	holder.x = x
-	holder.y = y
-	holder.width = G.cardWidth
-	holder.height = G.cardHeight
+	holder.box = Box:new(x, y, G.cardWidth, G.cardHeight)
 	holder.cards = {}
 	holder.type = type
 	holder.nextRank = nil
@@ -41,13 +38,13 @@ end
 function Holder:setPositions()
 	for index, card in ipairs(self.cards) do
 		if self.type == HolderType.GAME then
-			card.x = self.x
-			card.y = self.y + (G.gameHolderYStep * (index - 1))
+			local yTransformMultiplier = G.gameHolderYStep * (index - 1)
+			card:move(self.box.x, self.box.y + yTransformMultiplier)
 			card.isInStack = index ~= #self.cards
+			print("setting quad")
 			card:setQuad()
 		else
-			card.x = self.x
-			card.y = self.y
+			card:move(self.box.x, self.box.y)
 		end
 	end
 end
@@ -86,6 +83,9 @@ function Holder:removeCard(card)
 end
 
 function Holder:checkCanAdd(rank, suit)
+	-- Only used in subclasses, otherwise returns false
+	local _ = rank
+	local _ = suit
 	return false
 end
 
@@ -104,8 +104,7 @@ end
 
 --- Checks if a moving card is dropped within the holder
 function Holder:checkInHolder(x, y)
-	local addRange = self:getAddRange()
-	return x > addRange.minX and x < addRange.maxX and y > addRange.minY and y < addRange.maxY
+	return self.box:checkInBox(x, y, self:getAddRange().maxY)
 end
 
 --- gets the box that determines if a user
@@ -114,17 +113,17 @@ function Holder:getAddRange()
 	local lastCard = self.cards[#self.cards]
 	if lastCard == nil then
 		return {
-			minX = self.x,
-			maxX = self.x + self.width,
-			minY = self.y,
-			maxY = self.y + (self.height * 1.5),
+			minX = self.box.x,
+			maxX = self.box.x + self.box.width,
+			minY = self.box.y,
+			maxY = self.box.y + (self.box.height * 1.5),
 		}
 	else
 		return {
-			minX = self.x,
-			maxX = self.x + self.width,
-			minY = lastCard.y,
-			maxY = lastCard.y + (lastCard.height * 1.5), -- user can place on the last card or just a little below it
+			minX = self.box.x,
+			maxX = self.box.x + self.box.width,
+			minY = lastCard.box.y,
+			maxY = lastCard.box.y + (lastCard.box.height * 1.5), -- user can place on the last card or just a little below it
 		}
 	end
 end
@@ -132,13 +131,17 @@ end
 function Holder:draw()
 	if #self.cards == 0 then
 		love.graphics.setColor(0.21, 0.30, 0.16)
-		love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
+		love.graphics.rectangle("fill", self.box.x, self.box.y, self.box.width, self.box.height)
 		love.graphics.setColor(1, 1, 1)
 	else
-		for index, card in ipairs(self.cards) do
+		forEach(self.cards, function(card)
 			card:draw()
-		end
+		end)
 	end
+end
+
+function Holder:update(dt)
+	local _ = dt
 end
 
 function Holder:debugPrint()
@@ -147,3 +150,5 @@ function Holder:debugPrint()
 	print("Holder cards length: ", #self.cards)
 	print("--------")
 end
+
+return Holder
