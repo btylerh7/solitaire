@@ -13,8 +13,8 @@ LocationConfig = {
 }
 
 ---@class HolderLocations
----@field cardSlots GameHolder[]
----@field aceSlots Tableau[]
+---@field cardSlots Tableau[]
+---@field aceSlots Foundation[]
 ---@field drawPile DrawHolder
 ---@field drawnPile DrawHolder
 

@@ -1,13 +1,13 @@
 local class = require("engine.object-v2")
 local Holder = require("game.entities.holders.holder")
----@class GameHolder: Holder
+---@class Tableau: Holder
 ---@field lowestRank number | nil
 ---@field lowestSuit number | nil
-local GameHolder = class.inherit(Holder, "GameHolder")
+local Tableau = class.inherit(Holder, "GameHolder")
 
----@return GameHolder
-function GameHolder:new(x, y, type)
-	---@type GameHolder
+---@return Tableau
+function Tableau:new(x, y, type)
+	---@type Tableau
 	local holder = Holder.new(self, x, y, type)
 	holder.lowestRank = nil
 	holder.lowestSuit = nil
@@ -15,7 +15,7 @@ function GameHolder:new(x, y, type)
 end
 ---Sets the positions of each card in holder based on the holder's position
 ---This is how the game holders stack
-function GameHolder:setPositions()
+function Tableau:setPositions()
 	local yStep = G.gameHolderYStep
 	if #self.cards == 0 then
 		self.lowestSuit = nil
@@ -35,7 +35,7 @@ function GameHolder:setPositions()
 end
 
 ---Used when a card is dropped over a holder to see if it can be added
-function GameHolder:checkCanAdd(rank, suit)
+function Tableau:checkCanAdd(rank, suit)
 	-- Kings can be inserted if holder is empty
 	if #self.cards == 0 and rank == 13 then
 		return true
@@ -60,4 +60,4 @@ function GameHolder:checkCanAdd(rank, suit)
 	end
 end
 
-return GameHolder
+return Tableau

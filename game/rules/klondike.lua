@@ -92,51 +92,44 @@ function Klondike:deal()
 end
 
 ---@param card Card
+---@param target Holder
+---@param start Holder
+---If trying to add a card to foundation pile, make sure it is allowed
+function Klondike:foundationCheck(card, target, start)
+	if start.type == HolderType.STOCK or start.type == HolderType.FOUNDATION then
+		return false
+	end
+	if #target.cards == 0 then
+		return card.rank == 1
+	end
+	return card.rank == target.rank + 1
+end
+
+---@param card Card
 ---@param targetHolder Holder
 ---@param startingHolder Holder
 function Klondike:canMove(card, targetHolder, startingHolder)
 	local result = false
 	switch(targetHolder.type, {
-		[HolderType.FOUNDATION] = function()
-			if not startingHolder.type == HolderType.TABLEAU or startingHolder.type == HolderType.WASTE then
-				result = false
-				return
+		[HolderType.FOUNDATION] = function() end,
+		[HolderType.TABLEAU] = function()
+			local parentHolderCondition = startingHolder.type == HolderType.WASTE
+				or startingHolder.type == HolderType.TABLEAU
+			if #targetHolder.cards == 0 then
+				local isEmpty = #targetHolder.cards == 0
+				result = card.rank == 13
+			else
+				local lastCard = targetHolder.cards[#targetHolder.cards]
+				return parentHolderCondition
+					and self:isOneLess(card.rank, lastCard.rank)
+					and self:isOppositeSuit(card.suit, lastCard.suit)
 			end
 		end,
 		[HolderType.STOCK] = function()
-			result = startingHolder.type == HolderType.WASTE and #startingHolder.cards == 0
+			result = startingHolder.type == HolderType.WASTE and #targetHolder.cards == 0
 		end,
 		[HolderType.WASTE] = function()
-			result = startingHolder.type == HolderType.STOCK and #startingHolder.cards > 0
-		end,
-		[HolderType.TABLEAU] = function()
-			local lastCard = startingHolder.cards[#startingHolder.cards]
-			local isRank = function(holderSuit, cardRank, lastCardRank)
-				if not holderSuit then
-					return cardRank == 13
-				else
-					return cardRank == lastCardRank - 1
-				end
-			end
-			local isSuit = function(suit1, suit2)
-				if suit1 == 1 or suit1 == 2 then
-					return suit2 == 3 or suit2 == 4
-				else
-					return suit2 == 1 or suit2 == 2
-				end
-			end
-			switch(startingHolder.type, {
-				[HolderType.FOUNDATION] = function()
-					result = false
-				end,
-				[HolderType.STOCK] = function()
-					result = false
-				end,
-			}, {
-				function()
-					result = isRank(startingHolder.suit, card.rank, lastCard.rank) and isSuit(card.suit, lastCard.suit)
-				end,
-			})
+			result = startingHolder.type == HolderType.STOCK
 		end,
 	})
 	return result
