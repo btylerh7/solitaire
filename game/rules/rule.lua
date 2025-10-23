@@ -9,7 +9,7 @@ local DrawHolder = require("game.entities.holders.holder-draw")
 ---@field foundationColumns number
 ---@field useStock boolean -- Games like Freecell will not use a draw pile
 ---@field wasteColumns number -- Most games use one, but games like Freecell can use this for the four "Free cells"
----@field deal fun(self): {foundation: Foundation[], tableau: Tableau[], stock: DrawHolder, waste: DrawHolder[]}
+---@field deal fun(self): {foundation: Foundation[], tableau: Tableau[], stock: Stock, waste: Stock[]}
 local Rule = class.new("Rule")
 
 ---@param opts {tableauColumns: number, foundationColumns: number, useStock: boolean, wasteColumns: number}

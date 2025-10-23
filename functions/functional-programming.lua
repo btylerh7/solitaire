@@ -37,11 +37,11 @@ end
 ---@generic T
 ---@param list T[]
 ---@param fn fun(item: T): boolean
----@return T | nil
+---@return T, number | nil
 find = function(list, fn)
-	for _, value in ipairs(list) do
+	for index, value in ipairs(list) do
 		if fn(value) == true then
-			return value
+			return value, index
 		end
 	end
 	return nil

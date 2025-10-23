@@ -70,6 +70,40 @@ function Events:checkClickType(mouseX, mouseY)
 		timer.singleClickPending = true
 	end
 end
+function Events:handleClick(mouseX, mouseY)
+	local clickedHolder = HolderLocations:findHolder(mouseX, mouseY)
+	if clickedHolder then
+		print("A holder was clicked.")
+		print("Type is ", clickedHolder.type)
+		switch(clickedHolder.type, {
+			[HolderType.FOUNDATION] = function() end,
+			[HolderType.STOCK] = function()
+				HolderLocations:drawCard()
+			end,
+		}, function()
+			print("Handling click of tableau or waste pile")
+			local foundCard, foundIndex = find(clickedHolder.cards, function(card)
+				local isClicked = card:checkIsClicked(mouseX, mouseY)
+				local isDisplayed = card.isDisplayed
+				local hasParent = card.parent ~= nil
+
+				return isClicked and isDisplayed and hasParent
+			end)
+			if foundCard and foundIndex ~= nil then
+				print("Card found at index ", foundIndex)
+				assert(#States.gameState.movingCards.cards == 0, "No cards should be in moving cards at this point")
+
+				States:setStartingHolder(clickedHolder)
+				States.gameState.moving = true
+
+				while #clickedHolder.cards >= foundIndex do
+					table.insert(States.gameState.movingCards.cards, clickedHolder.cards[foundIndex])
+					clickedHolder:removeCard(clickedHolder.cards[foundIndex])
+				end
+			end
+		end)
+	end
+end
 function Events:clicked(mouseX, mouseY)
 	print("Checking click at " .. mouseX .. " " .. mouseY)
 	local isDrawPile = HolderLocations.drawPile:checkInHolder(mouseX, mouseY)

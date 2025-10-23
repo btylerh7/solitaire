@@ -4,7 +4,8 @@ local Holder = require("game.entities.holders.holder")
 local Foundation = class.inherit(Holder, "Foundation")
 
 ---@rturn Foundation
-function Foundation:new(x, y, type)
+function Foundation:new(x, y)
+	local type = HolderType.FOUNDATION
 	local holder = Holder.new(self, x, y, type)
 	return holder
 end

@@ -3,10 +3,11 @@ local Holder = require("game.entities.holders.holder")
 ---@class Tableau: Holder
 ---@field lowestRank number | nil
 ---@field lowestSuit number | nil
-local Tableau = class.inherit(Holder, "GameHolder")
+local Tableau = class.inherit(Holder, "Tableau")
 
 ---@return Tableau
-function Tableau:new(x, y, type)
+function Tableau:new(x, y)
+	local type = HolderType.TABLEAU
 	---@type Tableau
 	local holder = Holder.new(self, x, y, type)
 	holder.lowestRank = nil

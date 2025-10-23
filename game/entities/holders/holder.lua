@@ -5,9 +5,9 @@ local Box = require("engine.box")
 -- local Card = require("game.entities.card")
 ---@class HolderType
 HolderType = {
-	FOUNDATION = "ace",
-	TABLEAU = "game",
-	STOCK = "draw",
+	FOUNDATION = "foundation",
+	TABLEAU = "tableau",
+	STOCK = "stock",
 	WASTE = "waste",
 }
 

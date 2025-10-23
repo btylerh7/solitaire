@@ -17,8 +17,6 @@ HolderLocations = require("game.entities.holder-locations")
 function love.load()
 	HolderLocations:setupBoard()
 	States.gameState.isBoardSet = true
-	-- HolderLocations:setup()
-	-- HolderLocations:addShuffledCards()
 	scoreLabel = ScoreLabelClass:new(
 		LocationConfig.leftSideX,
 		love.graphics.getHeight() - 100,
@@ -35,7 +33,7 @@ function love.update(dt)
 		local currentTime = love.timer.getTime()
 		if currentTime - timer.clickTime > timer.clickInterval then
 			timer.singleClickPending = false
-			Events:clicked(timer.clickX, timer.clickY)
+			Events:handleClick(timer.clickX, timer.clickY)
 		end
 	end
 	if States.gameState.moving then

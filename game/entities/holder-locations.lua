@@ -15,8 +15,8 @@ LocationConfig = {
 ---@class HolderLocations
 ---@field cardSlots Tableau[]
 ---@field aceSlots Foundation[]
----@field drawPile DrawHolder
----@field drawnPile DrawHolder
+---@field drawPile Stock
+---@field drawnPile Stock
 
 local HolderLocations = class.new("HolderLocations")
 
@@ -29,39 +29,6 @@ function HolderLocations:setupBoard()
 	self.aceSlots = holders.foundation
 	self.drawPile = holders.stock
 	self.drawnPile = holders.waste[1]
-end
-
-function HolderLocations:setup()
-	local steppedX = function(startingValue, index)
-		return startingValue + (LocationConfig.stepCount * (index - 1))
-	end
-
-	local startX = LocationConfig.leftSideX
-	local startY = LocationConfig.topRowY
-
-	self.drawPile = DrawHolder:new(steppedX(startX, 1), startY, "draw")
-	self.drawnPile = DrawHolder:new(steppedX(startX, 2), startY, "drawn")
-
-	startX = LocationConfig.aceAreaX
-	startY = LocationConfig.topRowY
-	self.aceSlots = {
-		AceHolder:new(steppedX(startX, 1), startY, "ace"),
-		AceHolder:new(steppedX(startX, 2), startY, "ace"),
-		AceHolder:new(steppedX(startX, 3), startY, "ace"),
-		AceHolder:new(steppedX(startX, 4), startY, "ace"),
-	}
-	startX = LocationConfig.leftSideX
-	startY = LocationConfig.cardRowY
-
-	self.cardSlots = {
-		GameHolder:new(steppedX(startX, 1), startY, "game"),
-		GameHolder:new(steppedX(startX, 2), startY, "game"),
-		GameHolder:new(steppedX(startX, 3), startY, "game"),
-		GameHolder:new(steppedX(startX, 4), startY, "game"),
-		GameHolder:new(steppedX(startX, 5), startY, "game"),
-		GameHolder:new(steppedX(startX, 6), startY, "game"),
-		GameHolder:new(steppedX(startX, 7), startY, "game"),
-	}
 end
 
 --- Uses States.gameState.activeCards to place cards in correct spots
@@ -133,6 +100,10 @@ function HolderLocations:findHolder(x, y)
 			print("in holder, ace")
 			return holder
 		end
+	end
+	if self.drawnPile:checkInHolder(x, y) then
+		print("in waste pile")
+		return self.drawnPile
 	end
 	return nil
 end

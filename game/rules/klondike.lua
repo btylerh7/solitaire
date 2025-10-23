@@ -1,9 +1,10 @@
 require("functions.switch")
 local Rule = require("game.rules.rule")
 local class = require("engine.object-v2")
-local GameHolder = require("game.entities.holders.holder-game")
-local AceHolder = require("game.entities.holders.holder-ace")
-local DrawHolder = require("game.entities.holders.holder-draw")
+local Tableau = require("game.entities.holders.holder-game")
+local Foundation = require("game.entities.holders.holder-ace")
+local Stock = require("game.entities.holders.holder-draw")
+local Waste = require("game.entities.holders.holder-waste")
 
 ---@class Klondike:Rule
 local Klondike = class.inherit(Rule, "Klondike")
@@ -30,29 +31,29 @@ function Klondike:deal()
 	local startX = LocationConfig.leftSideX
 	local startY = LocationConfig.topRowY
 
-	local stock = DrawHolder:new(steppedX(startX, 1), startY, "draw")
+	local stock = Stock:new(steppedX(startX, 1), startY)
 	local waste = {}
-	table.insert(waste, DrawHolder:new(steppedX(startX, 2), startY, "drawn"))
+	table.insert(waste, Stock:new(steppedX(startX, 2), startY))
 
 	startX = LocationConfig.aceAreaX
 	startY = LocationConfig.topRowY
 	local foundation = {
-		AceHolder:new(steppedX(startX, 1), startY, "ace"),
-		AceHolder:new(steppedX(startX, 2), startY, "ace"),
-		AceHolder:new(steppedX(startX, 3), startY, "ace"),
-		AceHolder:new(steppedX(startX, 4), startY, "ace"),
+		Foundation:new(steppedX(startX, 1), startY),
+		Foundation:new(steppedX(startX, 2), startY),
+		Foundation:new(steppedX(startX, 3), startY),
+		Foundation:new(steppedX(startX, 4), startY),
 	}
 	startX = LocationConfig.leftSideX
 	startY = LocationConfig.cardRowY
 
 	local tableau = {
-		GameHolder:new(steppedX(startX, 1), startY, "game"),
-		GameHolder:new(steppedX(startX, 2), startY, "game"),
-		GameHolder:new(steppedX(startX, 3), startY, "game"),
-		GameHolder:new(steppedX(startX, 4), startY, "game"),
-		GameHolder:new(steppedX(startX, 5), startY, "game"),
-		GameHolder:new(steppedX(startX, 6), startY, "game"),
-		GameHolder:new(steppedX(startX, 7), startY, "game"),
+		Tableau:new(steppedX(startX, 1), startY),
+		Tableau:new(steppedX(startX, 2), startY),
+		Tableau:new(steppedX(startX, 3), startY),
+		Tableau:new(steppedX(startX, 4), startY),
+		Tableau:new(steppedX(startX, 5), startY),
+		Tableau:new(steppedX(startX, 6), startY),
+		Tableau:new(steppedX(startX, 7), startY),
 	}
 	local cardIndex = 1
 	local lastCardIndex = #States.gameState.activeCards
@@ -102,7 +103,24 @@ function Klondike:foundationCheck(card, target, start)
 	if #target.cards == 0 then
 		return card.rank == 1
 	end
-	return card.rank == target.rank + 1
+	return card.rank == target.rank + 1 and card.suit == target.suit
+end
+
+---@param card Card
+---@param target Holder
+---@param start Holder
+---If trying to add a card to a tableau column, make sure it is allowed
+function Klondike:tableauCheck(card, target, start)
+	if start.type == HolderType.STOCK or start.type == HolderType.FOUNDATION then
+		return false
+	end
+	if #target.cards == 0 then
+		return card.rank == 13
+	end
+	if not self:isOppositeSuit(card.suit, target.cards[#target.cards].suit) then
+		return false
+	end
+	return card.rank == target.rank - 1
 end
 
 ---@param card Card
@@ -111,19 +129,11 @@ end
 function Klondike:canMove(card, targetHolder, startingHolder)
 	local result = false
 	switch(targetHolder.type, {
-		[HolderType.FOUNDATION] = function() end,
+		[HolderType.FOUNDATION] = function()
+			result = self:foundationCheck(card, targetHolder, startingHolder)
+		end,
 		[HolderType.TABLEAU] = function()
-			local parentHolderCondition = startingHolder.type == HolderType.WASTE
-				or startingHolder.type == HolderType.TABLEAU
-			if #targetHolder.cards == 0 then
-				local isEmpty = #targetHolder.cards == 0
-				result = card.rank == 13
-			else
-				local lastCard = targetHolder.cards[#targetHolder.cards]
-				return parentHolderCondition
-					and self:isOneLess(card.rank, lastCard.rank)
-					and self:isOppositeSuit(card.suit, lastCard.suit)
-			end
+			result = self:tableauCheck(card, targetHolder, startingHolder)
 		end,
 		[HolderType.STOCK] = function()
 			result = startingHolder.type == HolderType.WASTE and #targetHolder.cards == 0
