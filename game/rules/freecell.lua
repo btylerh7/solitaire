@@ -96,6 +96,26 @@ function Freecell:deal()
 	}
 	return result
 end
+---@param cards Card[]
+function Freecell:isInOrder(cards)
+	local isInOrder = true
+	local previousCard = nil
+	forEach(cards, function(card)
+		print(card.rank)
+		print(card.suit)
+		if previousCard == nil then
+			previousCard = card
+		elseif isInOrder then
+			local oppositeSuit = self:isOppositeSuit(card.suit, previousCard.suit)
+			print("isOppositeSuit", oppositeSuit)
+			local isOneLess = self:isOneLess(card.rank, previousCard.rank)
+			print("oneLess", isOneLess)
+			isInOrder = oppositeSuit and isOneLess
+			previousCard = card
+		end
+	end)
+	return isInOrder
+end
 function Freecell:getFreeCellCount()
 	local freeCellCount = 0
 	forEach(HolderLocations.drawnPile, function(holder)
@@ -110,8 +130,12 @@ end
 ---@param start Holder
 ---If trying to add a card to a tableau column, make sure it is allowed
 function Freecell:tableauCheck(card, target, start)
-	-- TODO make sure every card in moving cards is opposite suit and in right order
 	if start.type == HolderType.STOCK or start.type == HolderType.FOUNDATION then
+		return false
+	end
+
+	if start.type == HolderType.TABLEAU and not self:isInOrder(States.gameState.movingCards.cards) then
+		print("Not in order...")
 		return false
 	end
 
@@ -140,6 +164,7 @@ end
 ---@param start Holder
 ---If trying to add a card to foundation pile, make sure it is allowed
 function Freecell:foundationCheck(card, target, start)
+	-- TODO make sure only one ccard can be added at a time
 	if start.type == HolderType.STOCK or start.type == HolderType.FOUNDATION then
 		return false
 	end
