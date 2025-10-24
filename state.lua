@@ -1,5 +1,6 @@
 require("functions.shuffle")
 local Klondike = require("game.rules.klondike")
+local Freecell = require("game.rules.freecell")
 local Rule = require("game.rules.rule")
 
 local States = {}
@@ -18,7 +19,7 @@ States.gameLocation = {
 ---@field remainingRedraws number
 ---@field isWin boolean
 ---@field isBoardSet boolean
----@field gameRules Rule | Klondike
+---@field gameRules Rule | Klondike | Freecell
 ---@field new fun(self)
 ---@field reset fun(self)
 States.gameState = {}
@@ -53,7 +54,7 @@ function States.clickTimer:reset()
 end
 function States.gameState:new()
 	self:reset()
-	self.gameRules = Klondike:new()
+	self.gameRules = Freecell:new()
 	self.isBoardSet = false
 	self.activeCards = setUpCards()
 	self.remainingRedraws = 3

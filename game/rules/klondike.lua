@@ -22,7 +22,6 @@ function Klondike:new()
 	return rule
 end
 
------@return {foundation: AceHolder[], tableau: GameHolder[], stock: DrawHolder, waste: DrawHolder[]}
 function Klondike:deal()
 	local steppedX = function(startingValue, index)
 		return startingValue + (LocationConfig.stepCount * (index - 1))
@@ -87,7 +86,9 @@ function Klondike:deal()
 		tableau = tableau,
 		foundation = foundation,
 		stock = stock,
-		waste = waste,
+		waste = {
+			[1] = waste,
+		},
 	}
 	return result
 end

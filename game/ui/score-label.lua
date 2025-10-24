@@ -17,7 +17,7 @@ function ScoreLabel:update()
 end
 
 function ScoreLabel:draw()
-	if not States.gameState.isWin then
+	if not States.gameState.isWin and States.gameState.gameRules.useStock then
 		Label.draw(self)
 		-- love.graphics.setFont(self.font)
 		-- love.graphics.setColor(1, 1, 1)

@@ -6,8 +6,11 @@ function Events:doubleClicked(mouseX, mouseY)
 	print("-----")
 	print("-----")
 	print("checking double click")
-	local isDrawPile = HolderLocations.drawPile:checkInHolder(mouseX, mouseY)
-	print("isDrawPile: ", isDrawPile)
+	local isDrawPile = false
+	if States.gameState.gameRules.useStock then
+		isDrawPile = HolderLocations.drawPile:checkInHolder(mouseX, mouseY)
+		print("isDrawPile: ", isDrawPile)
+	end
 	local isAce = filter(HolderLocations.aceSlots, function(holder)
 		return holder:checkInHolder(mouseX, mouseY)
 	end)
@@ -47,10 +50,12 @@ function Events:doubleClicked(mouseX, mouseY)
 	print("-----")
 end
 function Events:checkClickType(mouseX, mouseY)
-	if HolderLocations.drawPile:checkInHolder(mouseX, mouseY) then
-		--No need to check double click
-		self:handleClick(mouseX, mouseY)
-		return
+	if States.gameState.gameRules.useStock then
+		if HolderLocations.drawPile:checkInHolder(mouseX, mouseY) then
+			--No need to check double click
+			self:handleClick(mouseX, mouseY)
+			return
+		end
 	end
 	local currentTime = love.timer.getTime()
 	local timer = States.clickTimer
@@ -73,8 +78,6 @@ end
 function Events:handleClick(mouseX, mouseY)
 	local clickedHolder = HolderLocations:findHolder(mouseX, mouseY)
 	if clickedHolder then
-		print("A holder was clicked.")
-		print("Type is ", clickedHolder.type)
 		switch(clickedHolder.type, {
 			[HolderType.FOUNDATION] = function() end,
 			[HolderType.STOCK] = function()
@@ -90,7 +93,6 @@ function Events:handleClick(mouseX, mouseY)
 				end
 			end,
 		}, function()
-			print("Handling click of tableau or waste pile")
 			local foundCard, foundIndex = find(clickedHolder.cards, function(card)
 				local isClicked = card:checkIsClicked(mouseX, mouseY)
 				local isDisplayed = card.isDisplayed
@@ -99,7 +101,6 @@ function Events:handleClick(mouseX, mouseY)
 				return isClicked and isDisplayed and hasParent
 			end)
 			if foundCard and foundIndex ~= nil then
-				print("Card found at index ", foundIndex)
 				assert(#States.gameState.movingCards.cards == 0, "No cards should be in moving cards at this point")
 
 				States:setStartingHolder(clickedHolder)
