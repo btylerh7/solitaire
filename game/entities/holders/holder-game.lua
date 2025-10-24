@@ -33,6 +33,7 @@ function Tableau:setPositions()
 			card.isInStack = true
 		end
 	end
+	self:setRankAndSuit()
 end
 
 ---Used when a card is dropped over a holder to see if it can be added

@@ -49,7 +49,7 @@ end
 function Events:checkClickType(mouseX, mouseY)
 	if HolderLocations.drawPile:checkInHolder(mouseX, mouseY) then
 		--No need to check double click
-		self:clicked(mouseX, mouseY)
+		self:handleClick(mouseX, mouseY)
 		return
 	end
 	local currentTime = love.timer.getTime()
@@ -80,6 +80,15 @@ function Events:handleClick(mouseX, mouseY)
 			[HolderType.STOCK] = function()
 				HolderLocations:drawCard()
 			end,
+			[HolderType.WASTE] = function()
+				States:setStartingHolder(clickedHolder)
+				States.gameState.moving = true
+
+				if #clickedHolder.cards > 0 then
+					table.insert(States.gameState.movingCards.cards, clickedHolder.cards[#clickedHolder.cards])
+					clickedHolder:removeCard(clickedHolder.cards[#clickedHolder.cards])
+				end
+			end,
 		}, function()
 			print("Handling click of tableau or waste pile")
 			local foundCard, foundIndex = find(clickedHolder.cards, function(card)
@@ -104,49 +113,6 @@ function Events:handleClick(mouseX, mouseY)
 		end)
 	end
 end
-function Events:clicked(mouseX, mouseY)
-	print("Checking click at " .. mouseX .. " " .. mouseY)
-	local isDrawPile = HolderLocations.drawPile:checkInHolder(mouseX, mouseY)
-	if isDrawPile then
-		HolderLocations:drawCard()
-		love.audio.play(G.sounds.cardClick)
-		return
-	end
-	local foundCard = find(States.gameState.activeCards, function(card)
-		local isClicked = card:checkIsClicked(mouseX, mouseY)
-		local isDisplayed = card.isDisplayed
-		local hasParent = card.parent ~= nil
-
-		return isClicked and isDisplayed and hasParent
-	end)
-	if foundCard then
-		if #States.gameState.movingCards.cards > 0 then
-			error("There should be no cards here")
-		end
-		print("found!!")
-		foundCard:debugPrint()
-
-		local foundIndex = foundCard.parent:getIndexOfCard(foundCard)
-		local holder = foundCard.parent
-		if foundIndex and holder then
-			States:setStartingHolder(holder)
-			States.gameState.moving = true
-			while #holder.cards >= foundIndex do
-				table.insert(States.gameState.movingCards.cards, holder.cards[foundIndex])
-				holder:removeCard(holder.cards[foundIndex])
-			end
-			-- TODO ?
-			forEach(States.gameState.movingCards.cards, function(card) end)
-		end
-	end
-end
-
----@param card Card
----@param mouseX number
----@param mouseY number
-function Events:cardDragged(card, mouseX, mouseY) end
-
-function Events:cardMoving(mouseX, mouseY) end
 
 function Events:mouseReleased(mouseX, mouseY)
 	States.gameState.moving = false
@@ -177,7 +143,8 @@ function Events:mouseReleased(mouseX, mouseY)
 	end
 	local firstCard = States.gameState.movingCards.cards[1]
 
-	if firstCard and targetHolder:checkCanAdd(firstCard.rank, firstCard.suit) then
+	local canMove = States.gameState.gameRules:canMove(firstCard, targetHolder, startingHolder)
+	if firstCard and canMove then
 		print("sending to target")
 		sendToHolder(targetHolder)
 		startingHolder:displayLastCard()

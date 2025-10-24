@@ -105,6 +105,10 @@ function HolderLocations:findHolder(x, y)
 		print("in waste pile")
 		return self.drawnPile
 	end
+	if self.drawPile:checkInHolder(x, y) then
+		print("in stock pile")
+		return self.drawPile
+	end
 	return nil
 end
 

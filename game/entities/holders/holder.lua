@@ -48,6 +48,18 @@ function Holder:setPositions()
 			card:move(self.box.x, self.box.y)
 		end
 	end
+	self:setRankAndSuit()
+end
+
+function Holder:setRankAndSuit()
+	if #self.cards == 0 then
+		self.rank = 0
+		self.suit = nil
+		return
+	end
+	local lastCard = self.cards[#self.cards]
+	self.rank = lastCard.rank
+	self.suit = lastCard.suit
 end
 
 function Holder:displayLastCard()

@@ -33,7 +33,7 @@ function Klondike:deal()
 
 	local stock = Stock:new(steppedX(startX, 1), startY)
 	local waste = {}
-	table.insert(waste, Stock:new(steppedX(startX, 2), startY))
+	table.insert(waste, Waste:new(steppedX(startX, 2), startY))
 
 	startX = LocationConfig.aceAreaX
 	startY = LocationConfig.topRowY

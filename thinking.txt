@@ -93,3 +93,6 @@ For reference [Guide at solitaired.com](https://solitaired.com/guides/how-to-pla
     - waste to foundation
 - conditions
     - can transfer
+
+
+Idea: play round of solitaire to determine how powerful you are for boss fight. Or roguelike where each level you play klondike then free cell then spider solitaire
