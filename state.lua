@@ -54,7 +54,7 @@ function States.clickTimer:reset()
 end
 function States.gameState:new()
 	self:reset()
-	self.gameRules = Freecell:new()
+	self.gameRules = Klondike:new()
 	self.isBoardSet = false
 	self.activeCards = setUpCards()
 	self.remainingRedraws = 3

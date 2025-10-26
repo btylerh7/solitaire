@@ -31,8 +31,9 @@ function Klondike:deal()
 	local startY = LocationConfig.topRowY
 
 	local stock = Stock:new(steppedX(startX, 1), startY)
-	local waste = {}
-	table.insert(waste, Waste:new(steppedX(startX, 2), startY))
+	local wastePile = {
+		Waste:new(steppedX(startX, 2), startY),
+	}
 
 	startX = LocationConfig.aceAreaX
 	startY = LocationConfig.topRowY
@@ -86,9 +87,7 @@ function Klondike:deal()
 		tableau = tableau,
 		foundation = foundation,
 		stock = stock,
-		waste = {
-			[1] = waste,
-		},
+		waste = wastePile,
 	}
 	return result
 end

@@ -5,6 +5,8 @@ local AceHolder = require("game.entities.holders.holder-ace")
 local GameHolder = require("game.entities.holders.holder-game")
 local Rules = require("game.rules.rules")
 local Klondike = require("game.rules.klondike")
+local Freecell = require("game.rules.freecell")
+local inspect = require("vendor.inspect")
 LocationConfig = {
 	stepCount = 125,
 	topRowY = 15,
@@ -93,7 +95,7 @@ end
 
 ---Used when draw pile is clicked to reveal extra card
 function HolderLocations:drawCard()
-	if type(States.gameState.gameRules) ~= Klondike then
+	if type(States.gameState.gameRules) == Freecell then
 		print("No card drawing in Freecell")
 		return
 	end
