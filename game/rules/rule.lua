@@ -1,4 +1,4 @@
-local class = require("engine.object-v2")
+local class = require("engine.class")
 local Card = require("game.entities.card")
 local GameHolder = require("game.entities.holders.holder-game")
 local AceHolder = require("game.entities.holders.holder-ace")

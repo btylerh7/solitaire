@@ -1,6 +1,6 @@
 local Label = require("game.ui.label")
 local Box = require("engine.box")
-local class = require("engine.object-v2")
+local class = require("engine.class")
 
 ---@class WinLabel:Label
 local WinLabel = class.inherit(Label, "WinLabel")

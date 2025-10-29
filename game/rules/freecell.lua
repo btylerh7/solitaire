@@ -1,5 +1,5 @@
 local Rule = require("game.rules.rule")
-local class = require("engine.object-v2")
+local class = require("engine.class")
 local Tableau = require("game.entities.holders.holder-game")
 local Foundation = require("game.entities.holders.holder-ace")
 local Stock = require("game.entities.holders.holder-draw")

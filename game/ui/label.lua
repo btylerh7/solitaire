@@ -1,4 +1,4 @@
-local class = require("engine.object-v2")
+local class = require("engine.class")
 local Box = require("engine.box")
 ---@class Label
 ---@field box Box
