@@ -1,56 +1,20 @@
-require("game.entities.card")
-require("game.entities.holders.holder")
-require("game.entities.holders.holder-game")
-require("game.entities.holders.holder-ace")
-require("game.entities.holders.holder-draw")
-require("game.entities.holder-locations")
 require("events")
 
 G = require("globals")
-States = require("state")
+States = require("state.game")
 States:new()
-local ScoreLabelClass = require("game.ui.score-label")
-local WinLabelClass = require("game.ui.win-label")
-local Rules = require("game.rules.rules")
-HolderLocations = require("game.entities.holder-locations")
+ScreenState = require("state.screen"):new()
 
 function love.load()
-	HolderLocations:setupBoard()
-	States.gameState.isBoardSet = true
-	scoreLabel = ScoreLabelClass:new(
-		LocationConfig.leftSideX,
-		love.graphics.getHeight() - 100,
-		States.gameState.remainingRedraws
-	)
-	WinLabel = WinLabelClass:new(LocationConfig.leftSideX, love.graphics:getHeight() - 69)
+	ScreenState.currentScreen:load()
 end
 
 function love.update(dt)
-	local _ = dt --just to stop the lsp warning
-	scoreLabel:update()
-	local timer = States.clickTimer
-	if timer.singleClickPending then
-		local currentTime = love.timer.getTime()
-		if currentTime - timer.clickTime > timer.clickInterval then
-			timer.singleClickPending = false
-			Events:handleClick(timer.clickX, timer.clickY)
-		end
-	end
-	if States.gameState.moving then
-		local x = love.mouse.getX()
-		local y = love.mouse.getY()
-		for index, card in ipairs(States.gameState.movingCards.cards) do
-			card:move(x, ((index - 1) * G.gameHolderYStep) + y)
-		end
-	end
+	ScreenState.currentScreen:update(dt)
 end
 
 function love.draw()
-	love.graphics.setBackgroundColor(0.21, 0.42, 0.16)
-	HolderLocations:drawAll()
-	States.gameState:draw()
-	WinLabel:draw()
-	scoreLabel:draw()
+	ScreenState.currentScreen:draw()
 end
 
 function love.mousepressed(x, y, button, _, presses)

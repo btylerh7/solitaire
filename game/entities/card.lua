@@ -62,9 +62,11 @@ function Card:setQuad()
 end
 function Card:draw()
 	-- love.graphics.setShader(G.shaders.outline)
-	love.graphics.setShader(G.shaders.hearts)
 	-- G.shaders.outline:send("outline_color", { 0, 0, 0, 1 })
 	-- G.shaders.outline:send("border_thickness", 0.007)
+	if self.isDisplayed and self.suit == 1 then
+		love.graphics.setShader(G.shaders.hearts)
+	end
 	love.graphics.setBlendMode("alpha", "alphamultiply")
 	love.graphics.draw(self.sprite, self.quad, self.box.x, self.box.y, nil, G.zoomMultiplier, G.zoomMultiplier)
 	love.graphics.setColor(1, 1, 1, 1)
