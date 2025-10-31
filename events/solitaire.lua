@@ -1,8 +1,17 @@
 require("functions.functional-programming")
+local EventHandler = require("events.event-handler")
+local class = require("engine.class")
 
-Events = {}
+---@class SolitaireEvents: EventHandler
+local SolitaireEvents = class.inherit(EventHandler, "SolitaireEvents")
 
-function Events:doubleClicked(mouseX, mouseY)
+---@return SolitaireEvents
+function SolitaireEvents:new()
+	local events = EventHandler.new(self)
+	return events
+end
+
+function SolitaireEvents:doubleClicked(mouseX, mouseY)
 	print("-----")
 	print("-----")
 	print("checking double click")
@@ -49,33 +58,7 @@ function Events:doubleClicked(mouseX, mouseY)
 	print("-----")
 	print("-----")
 end
-function Events:checkClickType(mouseX, mouseY)
-	if States.gameState.gameRules.useStock then
-		if HolderLocations.drawPile:checkInHolder(mouseX, mouseY) then
-			--No need to check double click
-			self:handleClick(mouseX, mouseY)
-			return
-		end
-	end
-	local currentTime = love.timer.getTime()
-	local timer = States.clickTimer
-
-	local timeBetweenClicks = currentTime - timer.clickTime
-
-	if timeBetweenClicks < timer.clickInterval then
-		-- second click within clicking interval... double click
-		timer.singleClickPending = false
-		self:doubleClicked(mouseX, mouseY)
-	else
-		-- could be single click
-		print("could be single click")
-		timer.clickTime = currentTime
-		timer.clickX = mouseX
-		timer.clickY = mouseY
-		timer.singleClickPending = true
-	end
-end
-function Events:handleClick(mouseX, mouseY)
+function SolitaireEvents:handleClick(mouseX, mouseY)
 	local clickedHolder = HolderLocations:findHolder(mouseX, mouseY)
 	if clickedHolder then
 		switch(clickedHolder.type, {
@@ -115,7 +98,7 @@ function Events:handleClick(mouseX, mouseY)
 	end
 end
 
-function Events:mouseReleased(mouseX, mouseY)
+function SolitaireEvents:mouseReleased(mouseX, mouseY)
 	States.gameState.moving = false
 	if #States.gameState.movingCards.cards == 0 then
 		return
@@ -155,3 +138,5 @@ function Events:mouseReleased(mouseX, mouseY)
 	end
 	States:reset()
 end
+
+return SolitaireEvents

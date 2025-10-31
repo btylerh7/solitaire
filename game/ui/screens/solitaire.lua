@@ -12,10 +12,14 @@ local Rules = require("game.rules.rules")
 HolderLocations = require("game.entities.holder-locations")
 
 ---@class SolitaireScreen
+---@field type string
+---@field isLoaded boolean
 local SolitaireScreen = class.new("SolitaireScreen")
 
 function SolitaireScreen:new()
-	local screen = Screen.new(self)
+	local screen = setmetatable({}, self)
+	self.isLoaded = false
+	screen.type = ScreenTypes.SOLITAIRE
 	return screen
 end
 
@@ -28,6 +32,7 @@ function SolitaireScreen:load()
 		States.gameState.remainingRedraws
 	)
 	WinLabel = WinLabelClass:new(LocationConfig.leftSideX, love.graphics:getHeight() - 69)
+	self.isLoaded = true
 end
 
 function SolitaireScreen:update(dt)
@@ -38,7 +43,7 @@ function SolitaireScreen:update(dt)
 		local currentTime = love.timer.getTime()
 		if currentTime - timer.clickTime > timer.clickInterval then
 			timer.singleClickPending = false
-			Events:handleClick(timer.clickX, timer.clickY)
+			Events.solitaire:handleClick(timer.clickX, timer.clickY)
 		end
 	end
 	if States.gameState.moving then
