@@ -15,7 +15,7 @@ HolderLocations = require("game.entities.holder-locations")
 local SolitaireScreen = class.new("SolitaireScreen")
 
 function SolitaireScreen:new()
-	local screen = setmetatable({}, self)
+	local screen = Screen.new(self)
 	return screen
 end
 

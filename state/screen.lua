@@ -1,6 +1,7 @@
 local class = require("engine.class")
 
 local SolitaireScreen = require("game.ui.screens.solitaire")
+local MenuScreen = require("game.ui.screens.menu")
 
 local Screen = {
 	MENU = "menu",
@@ -10,12 +11,12 @@ local Screen = {
 }
 
 ---@class ScreenState
----@field currentScreen SolitaireScreen
+---@field currentScreen SolitaireScreen | MenuScreen
 local ScreenState = class.new("ScreenState")
 
 function ScreenState:new()
 	local screenState = setmetatable({}, self)
-	screenState.currentScreen = SolitaireScreen:new()
+	screenState.currentScreen = MenuScreen:new()
 	return screenState
 end
 
