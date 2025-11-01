@@ -1,6 +1,7 @@
 local class = require("engine.class")
 local Button = require("game.ui.button")
 local Box = require("engine.box")
+local Grid = require("game.ui.distribution.grid")
 
 ---@class MenuScreen
 ---@field buttons Button[]
@@ -21,8 +22,18 @@ end
 function MenuScreen:load()
 	local startX = love.graphics:getWidth() / 2
 	local startY = love.graphics:getHeight() / 2
-	local playButton = Button:new(Box:new(startX, startY, 200, 200), "Play Game", { color = { 1, 0, 1 } })
+	---@type Grid
+	ButtonGrid = Grid:new(Box:new(0, 0, love.graphics.getWidth(), love.graphics:getHeight()), "center")
+	local buttonColor = { 0.5, 0.5, 1 }
+
+	local playButton =
+		Button:new(Box:new(startX, startY, 200, 120), "Play Game", { color = buttonColor, borderRadius = 10 })
+	local exitButton =
+		Button:new(Box:new(startX, startY + 1, 200, 120), "Exit Game", { color = buttonColor, borderRadius = 10 })
 	self.playButton = playButton
+	ButtonGrid:addItem(playButton)
+	ButtonGrid:addItem(exitButton)
+	ButtonGrid:distributeVertically()
 	table.insert(self.buttons, playButton)
 	self.isLoaded = true
 end
@@ -30,9 +41,10 @@ end
 function MenuScreen:update(dt) end
 
 function MenuScreen:draw()
-	forEach(self.buttons, function(button)
-		button:draw()
-	end)
+	ButtonGrid:draw()
+	-- forEach(self.buttons, function(button)
+	-- 	button:draw()
+	-- end)
 end
 
 return MenuScreen

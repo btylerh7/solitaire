@@ -14,21 +14,21 @@ end
 
 ---@generic T
 ---@param list T[]
----@param fn fun(item: T)
+---@param fn fun(item: T, index?: number): any
 forEach = function(list, fn)
-	for _, value in ipairs(list) do
-		fn(value)
+	for currIndex, value in ipairs(list) do
+		fn(value, currIndex)
 	end
 end
 
 ---@generic T
 ---@param list T[]
----@param fn fun(item: T): any
+---@param fn fun(item: T, index?: number): any
 ---@return any[]
 map = function(list, fn)
 	local result = {}
-	for _, value in ipairs(list) do
-		local newValue = fn(value)
+	for currIndex, value in ipairs(list) do
+		local newValue = fn(value, currIndex)
 		table.insert(result, newValue)
 	end
 	return result
