@@ -8,3 +8,5 @@ function Screen:new()
 	self.isLoaded = false
 	return screen
 end
+
+return Screen

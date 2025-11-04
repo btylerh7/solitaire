@@ -64,7 +64,7 @@ function Card:draw()
 	-- love.graphics.setShader(G.shaders.outline)
 	-- G.shaders.outline:send("outline_color", { 0, 0, 0, 1 })
 	-- G.shaders.outline:send("border_thickness", 0.007)
-	if self.isDisplayed and self.suit == 3 or self.suit == 4 then
+	if self.isDisplayed and (self.suit == 3 or self.suit == 4) then
 		love.graphics.setShader(G.shaders.hearts)
 	end
 	love.graphics.setBlendMode("alpha", "alphamultiply")

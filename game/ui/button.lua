@@ -4,6 +4,7 @@ local class = require("engine.class")
 ---@field text string
 ---@field box Box
 ---@field opts {color: string, borderRadius: number}
+---@field onClick fun()
 local Button = class.new("Button")
 
 ---@param box Box

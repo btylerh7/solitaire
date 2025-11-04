@@ -12,9 +12,11 @@ end
 function MainMenuEvents:handleClick(mouseX, mouseY)
 	if ScreenState.currentScreen.type == ScreenTypes.MENU then
 		local menuState = ScreenState.screens.MENU
-		if menuState.playButton.box:checkInBox(mouseX, mouseY) then
-			ScreenState:changeScreen(ScreenState.screens.SOLITAIRE)
-		end
+		forEach(menuState.buttons, function(button)
+			if button.box:checkInBox(mouseX, mouseY) then
+				button.onClick()
+			end
+		end)
 	end
 end
 
