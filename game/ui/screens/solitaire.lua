@@ -37,6 +37,11 @@ end
 
 function SolitaireScreen:update(dt)
 	local _ = dt --just to stop the lsp warning
+
+	if love.keyboard.isDown("escape") then
+		ScreenState:changeScreen(ScreenState.screens.PAUSE)
+	end
+
 	scoreLabel:update()
 	local timer = States.clickTimer
 	if timer.singleClickPending then

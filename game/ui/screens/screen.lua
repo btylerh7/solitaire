@@ -1,4 +1,4 @@
-local class = require("endine.class")
+local class = require("engine.class")
 
 ---@class Screen
 ---@field isLoaded boolean

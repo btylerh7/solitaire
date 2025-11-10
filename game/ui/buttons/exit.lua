@@ -5,7 +5,7 @@ local class = require("engine.class")
 local ExitButton = class.inherit(Button, "ExitButton")
 
 ---@param box Box
----@param opts {color: number[], borderRadius: number}
+---@param opts {color: number[], borderRadius: number, onClick: fun()}
 function ExitButton:new(box, opts)
 	local text = "Exit Game"
 	local button = Button:new(box, text, opts)

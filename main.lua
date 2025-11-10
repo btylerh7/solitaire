@@ -30,6 +30,9 @@ function love.mousepressed(x, y, button, _, presses)
 			[ScreenState.screens.MENU] = function()
 				Events.mainMenu:handleClick(x, y)
 			end,
+			[ScreenState.screens.PAUSE] = function()
+				Events.mainMenu:handleClick(x, y)
+			end,
 		})
 		-- Events:checkClickType(x, y)
 	end

@@ -17,6 +17,10 @@ function Grid:new(box, alignment, opts)
 	return grid
 end
 
+function Grid:clearButtons()
+	self.items = {}
+end
+
 function Grid:addItem(item)
 	table.insert(self.items, item)
 end

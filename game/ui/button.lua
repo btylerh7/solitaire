@@ -9,12 +9,15 @@ local Button = class.new("Button")
 
 ---@param box Box
 ---@param text string
----@param opts {color: number[], borderRadius: number}
+---@param opts {color: number[], borderRadius: number, onClick: fun()}
 function Button:new(box, text, opts)
 	local button = setmetatable({}, self)
 	button.box = box
 	button.text = text
 	button.opts = opts
+	if button.opts.onClick then
+		self.onClick = opts.onClick
+	end
 	button:centerXY()
 	return button
 end

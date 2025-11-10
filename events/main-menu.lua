@@ -10,8 +10,8 @@ function MainMenuEvents:new()
 end
 
 function MainMenuEvents:handleClick(mouseX, mouseY)
-	if ScreenState.currentScreen.type == ScreenTypes.MENU then
-		local menuState = ScreenState.screens.MENU
+	if ScreenState.currentScreen.type ~= ScreenTypes.SOLITAIRE then
+		local menuState = ScreenState.currentScreen
 		forEach(menuState.buttons, function(button)
 			if button.box:checkInBox(mouseX, mouseY) then
 				button.onClick()

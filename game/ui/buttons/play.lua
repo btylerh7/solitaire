@@ -5,7 +5,7 @@ local class = require("engine.class")
 local PlayButton = class.inherit(Button, "PlayButton")
 
 ---@param box Box
----@param opts {color: number[], borderRadius: number}
+---@param opts {color: number[], borderRadius: number, onClick: fun()}
 function PlayButton:new(box, opts)
 	local text = "Play Game"
 	local button = Button:new(box, text, opts)
